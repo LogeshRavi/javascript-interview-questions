@@ -1,0 +1,133 @@
+
+Flatten an Array (without Array.flat)
+
+function flatten(arr) {
+  let result = [];
+  for (let item of arr) {
+    if (Array.isArray(item)) {
+      result.push(...flatten(item));
+    } else {
+      result.push(item);
+    }
+  }
+  return result;
+}
+
+console.log(flatten([1,2,3,[4,5,6,[7,8,[10,11]]],9]))
+// [1,2,3,4,5,6,7,8,10,11,9]
+
+
+--------------------------------------------------------------------
+
+Sum of Numbers without for loop
+
+let arr = [1,2,3,4,5]
+let sum = arr.reduce((acc,val)=> acc+val,0)
+console.log(sum)
+//15
+
+
+--------------------------------------------------------------------
+
+Shallow copy and Deep copy
+
+
+Copies reference for nested objects
+
+const obj1 = { a: 1, b: { c: 2 } };
+const obj2 = { ...obj1 };
+
+obj2.b.c = 5;
+console.log(obj1.b.c); // 5 ❌
+
+
+Completely new object
+
+const deepCopy = JSON.parse(JSON.stringify(obj1));
+
+
+--------------------------------------------------------------------
+
+Promise & Async/Await Output Puzzle
+
+console.log("start");
+
+setTimeout(() => console.log("timeout"), 0);
+
+Promise.resolve().then(() => console.log("promise"));
+
+console.log("end");
+
+
+start
+end
+promise
+timeout
+
+
+--------------------------------------------------------------------
+
+First Repeating Character
+
+function firstRepeat(str) {
+  let set = new Set()
+  for(let item of str){
+      if(set.has(item)) {
+          return item
+      }else{
+          set.add(item)
+      }
+  }
+  
+  return set
+}
+
+console.log(firstRepeat("success"))  ; // "c"
+
+
+--------------------------------------------------------------------
+
+Stopwatch Implementation
+
+let timer;
+let seconds = 0;
+
+function start() {
+  if (!timer) {
+    timer = setInterval(() => {
+      seconds++;
+      console.log(seconds);
+    }, 1000);
+  }
+}
+
+function stop() {
+  clearInterval(timer);
+  timer = null;
+}
+
+function reset() {
+  stop();
+  seconds = 0;
+}
+
+
+--------------------------------------------------------------------
+
+Currying – Infinite Sum
+
+
+function sum(a){
+    let total = a
+    
+    return function next(b){
+        if(b === undefined) return total
+        total += b
+        return next
+    }
+}
+
+
+console.log(sum(10)(20)(30)())
+//60
+
