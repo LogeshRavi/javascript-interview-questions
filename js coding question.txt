@@ -1,0 +1,172 @@
+Reverse a String
+
+const reverseString = str => str.split('').reverse().join('');
+
+--------------------------------------------------------------------
+
+Check if a String is a Palindrome
+
+const isPalindrome = str => str === str.split('').reverse().join('');
+
+--------------------------------------------------------------------
+
+Remove Duplicates from a String
+const removeDuplicates = str => [...new Set(str)].join('');
+
+--------------------------------------------------------------------
+
+First Non-Repeating Character
+const firstNonRepeat = str =>
+  str.split('').find(c => str.indexOf(c) === str.lastIndexOf(c));
+  
+--------------------------------------------------------------------
+
+Count Occurrences of Each Character
+
+const charCount = str => {
+  let obj = {};
+  for (let c of str) obj[c] = (obj[c] || 0) + 1;
+  return obj;
+};
+
+--------------------------------------------------------------------
+
+Reverse Words in a Sentence
+const reverseWords = s => s.split(' ').reverse().join(' ');
+
+--------------------------------------------------------------------
+
+Check if Two Strings are Anagrams
+const isAnagram = (a, b) =>
+  a.split('').sort().join('') === b.split('').sort().join('');
+  
+--------------------------------------------------------------------
+
+Longest Substring Without Repeating Characters
+const longestUnique = s => {
+  let set = new Set(), l = 0, max = 0;
+  for (let r = 0; r < s.length; r++) {
+    while (set.has(s[r])) set.delete(s[l++]);
+    set.add(s[r]);
+    max = Math.max(max, r - l + 1);
+  }
+  return max;
+};
+
+--------------------------------------------------------------------
+
+String to Integer (atoi)
+const myAtoi = str => parseInt(str) || 0;
+
+--------------------------------------------------------------------
+
+Compress String (RLE)
+const compress = str => {
+  let res = '', count = 1;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === str[i+1]) count++;
+    else { res += str[i] + count; count = 1; }
+  }
+  return res;
+};
+
+--------------------------------------------------------------------
+
+1️⃣1️⃣ Most Frequent Character
+const mostFrequent = str =>
+  Object.entries(charCount(str)).sort((a,b)=>b[1]-a[1])[0][0];
+ 
+--------------------------------------------------------------------
+
+1️⃣2️⃣ All Substrings
+const substrings = str => {
+  let res = [];
+  for(let i=0;i<str.length;i++)
+    for(let j=i+1;j<=str.length;j++)
+      res.push(str.slice(i,j));
+  return res;
+};
+
+--------------------------------------------------------------------
+
+String Rotation
+const isRotation = (a,b) => a.length===b.length && (a+a).includes(b);
+
+--------------------------------------------------------------------
+
+Remove Whitespaces
+const removeSpaces = str => str.replace(/\s/g,'');
+
+--------------------------------------------------------------------
+
+Valid Shuffle
+const isShuffle = (a,b,c) =>
+  (a+b).split('').sort().join('') === c.split('').sort().join('');
+  
+--------------------------------------------------------------------
+
+Title Case
+const titleCase = str =>
+  str.split(' ').map(w => w[0].toUpperCase()+w.slice(1)).join(' ');
+  
+--------------------------------------------------------------------
+
+Longest Common Prefix
+const lcp = arr =>
+  arr.reduce((a,b)=> {
+    while(!b.startsWith(a)) a=a.slice(0,-1);
+    return a;
+  });
+  
+--------------------------------------------------------------------
+
+String to Character Array
+const toCharArray = str => [...str];
+
+--------------------------------------------------------------------
+
+Replace Space with %20
+const urlEncode = str => str.replace(/ /g,'%20');
+
+--------------------------------------------------------------------
+
+Acronym
+const acronym = str =>
+  str.split(' ').map(w=>w[0].toUpperCase()).join('');
+  
+--------------------------------------------------------------------
+
+Only Digits
+const onlyDigits = str => /^\d+$/.test(str);
+
+--------------------------------------------------------------------
+
+Word Count
+const wordCount = str => str.trim().split(/\s+/).length;
+
+--------------------------------------------------------------------
+
+Remove Given Character
+const removeChar = (str,ch) => str.split(ch).join('');
+
+--------------------------------------------------------------------
+
+Shortest Word
+const shortestWord = str =>
+  str.split(' ').reduce((a,b)=>a.length<=b.length?a:b);
+  
+--------------------------------------------------------------------
+
+Longest Palindromic Substring (Simple)
+const longestPalindrome = s => {
+  let res='';
+  for(let i=0;i<s.length;i++)
+    for(let j=i;j<s.length;j++){
+      let sub=s.slice(i,j+1);
+      if(sub===sub.split('').reverse().join('') && sub.length>res.length)
+        res=sub;
+    }
+  return res;
+};
+
+--------------------------------------------------------------------
