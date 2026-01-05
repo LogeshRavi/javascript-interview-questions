@@ -1,0 +1,457 @@
+Execution Context
+
+“Execution context is the environment where JavaScript code is executed.
+Each execution context has two phases: memory creation and execution.
+In memory phase, variables are initialized with undefined and functions are fully hoisted.
+Then in execution phase, values are assigned and code runs line by line.
+JavaScript first creates the global execution context and then creates a new execution context for every function call.”
+
+
+💻 Example
+var a = 10;
+
+function test() {
+  var b = 20;
+  console.log(a + b);
+}
+
+test();
+
+Memory Phase:
+a = undefined
+test = function(){}
+
+Execution Phase:
+a = 10
+b = 20
+
+
+=============================================================================================================================
+
+Call Stack & Event Loop
+
+“The call stack is responsible for executing functions in a LIFO order.
+When async operations like setTimeout,Promise,API calls are used, JavaScript sends them to Web APIs.
+Once completed, their callbacks are placed in the callback queue.
+The event loop continuously checks if the call stack is empty and then pushes callbacks from the queue into the stack.”
+
+
+💻 Example
+console.log("Start");
+
+setTimeout(() => {
+  console.log("Timeout");
+}, 0);
+
+console.log("End");
+
+Output
+Start
+End
+Timeout
+
+=============================================================================================================================
+
+Hoisting
+
+“Hoisting means variable and function declarations are moved to the top of their scope during the memory creation phase.
+Variables declared with var are hoisted and initialized with undefined, whereas function declarations are fully hoisted.”
+
+
+💻 Example
+console.log(a); // undefined
+var a = 10;
+
+Behind the scenes:
+var a;
+console.log(a);
+a = 10;
+
+Function Hoisting
+test();
+
+function test() {
+  console.log("Hello");
+}
+
+
+✔ Works because functions are fully hoisted.
+
+=============================================================================================================================
+
+var vs let vs const
+
+“var is function scoped and can be redeclared, which may cause bugs.
+let and const are block scoped and are safer.
+const is used when reassignment is not required, while let is used when values need to change.”
+
+if (true) {
+  var a = 10;
+  let b = 20;
+}
+
+console.log(a); // 10
+console.log(b); // Error
+
+
+=============================================================================================================================
+
+Temporal Dead Zone (TDZ)
+
+“Temporal Dead Zone is the period where a let or const variable exists but is not initialized.
+Accessing it before initialization throws a reference error.
+This helps catch bugs and enforces better coding practices.”
+
+=============================================================================================================================
+
+Scope & Scope Chain
+
+“Scope defines the accessibility of variables.
+When a variable is not found in the current scope, JavaScript looks into its outer scope, and this process is called the scope chain.
+This is the reason closures work in JavaScript.”
+
+
+💻 Example
+var a = 10;
+
+function outer() {
+  var b = 20;
+
+  function inner() {
+    console.log(a, b);
+  }
+
+  inner();
+}
+
+outer();
+
+=============================================================================================================================
+Closures (⭐ MOST IMPORTANT ⭐)
+
+“A closure is a function that remembers its lexical scope even after the outer function has finished execution.
+Closures are commonly used for data hiding, maintaining state, and in cases like debouncing and currying.”
+
+💻 Example
+function outer() {
+  let count = 0;
+
+  function inner() {
+    count++;
+    console.log(count);
+  }
+
+  return inner;
+}
+
+const fn = outer();
+fn(); // 1
+fn(); // 2
+
+=============================================================================================================================
+
+this Keyword (ALL CASES)
+
+“The value of this depends on how a function is called.
+In normal functions, this refers to the calling object, but arrow functions do not have their own this and instead inherit it from the lexical scope.
+In constructor functions, this refers to the newly created object.”
+
+💻 Different Cases
+Global Scope
+console.log(this); // window (browser)
+
+
+Inside Function (non-strict)
+function test() {
+  console.log(this);
+}
+test(); // window
+
+
+Inside Object Method
+const obj = {
+  name: "JS",
+  show() {
+    console.log(this.name);
+  }
+};
+obj.show(); // JS
+
+
+Arrow Function
+const obj = {
+  name: "JS",
+  show: () => {
+    console.log(this.name);
+  }
+};
+obj.show(); // undefined
+
+
+➡ Arrow functions do not have their own this.
+
+Constructor Function
+function Person(name) {
+  this.name = name;
+}
+const p1 = new Person("Logesh");
+console.log(p1.name);
+
+=============================================================================================================================
+
+
+call, apply, bind
+
+“call, apply, and bind are used to explicitly control the value of this.
+call accepts arguments individually, apply accepts arguments as an array, and bind returns a new function that can be invoked later.
+bind is commonly used in event handlers and callbacks.”
+
+function greet(city, country) {
+  console.log(this.name, city, country);
+}
+
+const user = { name: "Logesh" };
+
+greet.call(user, "Chennai", "India");
+greet.apply(user, ["Chennai", "India"]);
+
+const boundFn = greet.bind(user, "Chennai", "India");
+boundFn();
+
+=============================================================================================================================
+Currying
+
+“Currying is a functional programming technique where a function takes arguments one at a time.
+It helps in reusability and partial application.
+In real projects, currying is often used in utility functions and configuration-based logic.”
+
+function sum(a){
+    let total = a
+    
+    return function next(b){
+        if(b === undefined) return total
+        total += b
+        return next
+    }
+}
+
+
+console.log(sum(10)(20)(30)())
+//60
+
+=============================================================================================================================
+
+Debounce & Throttle
+
+“Debounce delays the function execution until the event stops firing, whereas throttle ensures a function is executed at regular intervals.
+Debounce is useful for search inputs, and throttle is useful for scroll or resize events.
+Both are used to improve performance and avoid unnecessary API calls.”
+
+💻 Example (Search Input)
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
+
+💻 Example (Scroll Event)
+function throttle(fn, limit) {
+  let inThrottle = false;
+
+  return function (...args) {
+    if (!inThrottle) {
+      fn.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+
+
+=============================================================================================================================
+
+Promise
+
+“A promise has three states: pending, fulfilled, and rejected.
+Initially it is pending, then it moves to fulfilled when resolved or rejected when an error occurs.
+Once a promise is settled, its state cannot be changed.”
+
+💻 Example
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("Success");
+  }, 1000);
+});
+
+=============================================================================================================================
+
+async / await
+
+“async/await is built on top of promises and improves code readability.
+It allows writing asynchronous code in a synchronous manner, making it easier to handle errors using try-catch blocks.”
+
+💻 Example
+async function getData() {
+  try {
+    const res = await fetch("/api/data");
+    const data = await res.json();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+=============================================================================================================================
+
+Polyfill
+
+“map iterates over an array and returns a new array.
+In the polyfill, this refers to the calling array.
+We loop through the array, apply the callback, and push the result into a new array.”
+
+
+1.Polyfill for map()
+
+Array.prototype.myMap = function (callback) {
+  let result = [];
+
+  for (let i = 0; i < this.length; i++) {
+    result.push(callback(this[i], i, this));
+  }
+
+  return result;
+};
+
+2.Polyfill for filter()
+
+Array.prototype.myFilter = function (callback) {
+  let result = [];
+
+  for (let i = 0; i < this.length; i++) {
+    if (callback(this[i], i, this)) {
+      result.push(this[i]);
+    }
+  }
+
+  return result;
+};
+
+3.Polyfill for reduce()
+
+Array.prototype.myReduce = function (callback, initialValue) {
+  let accumulator = initialValue;
+  let startIndex = 0;
+
+  if (accumulator === undefined) {
+    accumulator = this[0];
+    startIndex = 1;
+  }
+
+  for (let i = startIndex; i < this.length; i++) {
+    accumulator = callback(accumulator, this[i], i, this);
+  }
+
+  return accumulator;
+};
+
+4.Polyfill for call()
+
+Function.prototype.myCall = function (context, ...args) {
+  context = context || window;
+  context.fn = this;
+  context.fn(...args);
+  delete context.fn;
+};
+
+5.Polyfill for apply()
+
+Function.prototype.myApply = function (context, argsArray) {
+  context = context || window;
+  context.fn = this;
+  context.fn(...argsArray);
+  delete context.fn;
+};
+
+6.Polyfill for bind()
+
+Function.prototype.myBind = function (context, ...args) {
+  const originalFn = this;
+
+  return function (...newArgs) {
+    return originalFn.apply(context, [...args, ...newArgs]);
+  };
+};
+
+
+=============================================================================================================================
+
+shallow vs deep copy
+
+“A shallow copy copies only the first level of an object, so nested objects still share the same reference.
+A deep copy creates a completely independent copy of all nested objects.
+In projects, shallow copy is usually enough for state updates, but deep copy is required when nested data must not mutate.”
+
+
+1.example for shallow copy
+
+const obj1 = { name: "JS", address: { city: "Chennai" } };
+
+const shallow1 = Object.assign({}, obj1);
+const shallow2 = { ...obj1 };
+
+shallow1.address.city = "Bangalore";
+
+console.log(obj1.address.city); // Bangalore ❗
+
+
+2.example for deep copy
+
+
+const obj2 = { name: "JS", address: { city: "Chennai" } };
+
+const deepCopy = JSON.parse(JSON.stringify(obj2));
+deepCopy.address.city = "Bangalore";
+
+console.log(obj2.address.city); // Chennai ✅
+
+=============================================================================================================================
+
+
+Arrow Function vs Normal Function
+
+
+“Normal functions have their own this based on how they are called, while arrow functions inherit this from the surrounding scope.
+Arrow functions are best suited for callbacks, while normal functions are preferred for object methods and constructors.”
+
+
+=============================================================================================================================
+
+
+Prototypes 
+
+“JavaScript uses prototypal inheritance.
+Objects inherit properties from their prototype through the prototype chain.
+This avoids duplication and improves memory efficiency.”
+
+
+💻 Example
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.sayHello = function () {
+  console.log("Hello " + this.name);
+};
+
+const p1 = new Person("Logesh");
+p1.sayHello(); // Hello Logesh
+
+=============================================================================================================================
