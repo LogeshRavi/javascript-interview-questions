@@ -1,0 +1,438 @@
+
+
+Nodejs
+
+
+“Node.js is a JavaScript runtime environment built on Chrome V8 engine.
+I mainly use Node.js for building REST APIs and backend services.
+
+The biggest advantage is its non-blocking and event-driven architecture, which helps handle multiple requests efficiently.
+
+------------------------------------------------------------------------------------------------------
+
+Why Node.js is Single Threaded
+
+
+“Node.js follows a single-threaded event loop architecture.
+
+Even though JavaScript runs in a single thread, Node.js can still handle multiple requests simultaneously using asynchronous operations.
+
+For example, if one API is waiting for database response, Node.js will not block the entire application. It will continue processing other requests.
+
+This makes Node.js lightweight and scalable for I/O-heavy applications.”
+
+
+
+------------------------------------------------------------------------------------------------------
+Difference between setTimeout, setImmediate, process.nextTick
+
+In Node.js, these three differ based on when they execute in the event loop.
+
+process.nextTick runs immediately after the current call stack, before the event loop continues. It executes before promises, timers, and I/O, so overusing it can block the event loop.
+
+setTimeout schedules a callback in the timers phase after the specified delay, so it runs after microtasks and I/O polling.
+
+setImmediate runs in the check phase, which is right after I/O callbacks, and is useful when we want to execute logic once I/O is completed.
+
+So in short:
+
+nextTick → highest priority
+
+setTimeout → scheduled by time
+
+setImmediate → after I/O
+
+------------------------------------------------------------------------------------------------------------
+
+
+Difference between cluster and worker threads
+
+In Node.js, Cluster and Worker Threads are both used to utilize multi-core CPUs, but they solve different problems.
+
+Cluster creates multiple Node.js processes, each with its own event loop and memory.
+It is mainly used to scale HTTP servers and handle more concurrent requests by distributing traffic across CPU cores.
+
+Worker Threads run inside the same process but on different threads.
+They share memory and are used for CPU-intensive tasks like data processing, encryption, or image manipulation.
+
+In short, Cluster is for scaling requests, and Worker Threads are for heavy computation without blocking the event loop.
+
+Cluster = more processes for more traffic
+Worker Threads = more threads for heavy work
+
+
+---------------------------------------------------------------------------------------------------------------
+
+what is eventloop in nodejs and how it's diffrent from browser eventloop ?
+
+The Event Loop is the mechanism that allows JavaScript to perform non-blocking asynchronous operations using a single thread.
+
+In Node.js, the event loop is implemented by libuv. It continuously checks different phases like timers, 
+I/O callbacks, poll, check, and close callbacks, and executes queued callbacks when the call stack is free.
+
+This enables Node.js to handle thousands of concurrent requests efficiently without creating a new thread per request.
+
+In contrast, the browser event loop is designed mainly for UI responsiveness. It manages DOM events, rendering, and user interactions along with 
+async tasks like promises and timers.
+
+While both use the concept of microtasks and macrotasks, Node.js has multiple event loop phases and also uses a thread pool for I/O operations,
+which does not exist in the browser.
+
+So overall, Node.js event loop is optimized for server-side concurrency, whereas the browser event loop is optimized for UI and rendering.
+
+----------------------------------------------------------------------------------------------------------------
+Libuv
+
+libuv is a C library used internally by Node.js to handle asynchronous operations and manage the event loop.
+Even though Node.js runs JavaScript in a single thread, libuv allows it to perform non-blocking I/O
+operations like file system access, network requests, and timers.
+So, in simple terms, libuv is the core reason why Node.js can handle multiple requests efficiently
+despite being single-threaded.
+
+----------------------------------------------------------------------------------------------------------------
+Rate Limiting
+
+Rate limiting is a technique used to control the number of requests a client can make to a
+server within a specific time window.
+It helps prevent abuse, DDoS attacks, and ensures fair usage of APIs.
+In Node.js, we typically implement rate limiting using middleware like express-rate-limit,
+where we define limits such as 100 requests per 15 minutes per IP.
+For scalable systems, we use distributed stores like Redis to track request counts across multiple servers.
+This ensures consistency and prevents users from bypassing limits in a load-balanced environment.
+
+
+
+----------------------------------------------------------------------------------------------------------------
+
+How would you scale a Node.js app for millions of users?
+
+
+To scale a Node.js application for millions of users, I would focus on horizontal scaling since Node.js is single-threaded.
+
+First, I would use clustering to run multiple instances of the app across CPU cores and servers.
+Then, place a load balancer like Nginx or AWS ELB to distribute traffic efficiently.
+
+I would introduce caching using Redis to reduce database load and improve response time.
+For heavy or async tasks, I would use message queues like Kafka or RabbitMQ.
+
+Finally, I would optimize the database using indexing, pagination, and possibly move to microservices if needed.
+
+
+
+
+----------------------------------------------------------------------------------------------------------------
+Error Handling
+
+“In Express applications, I usually handle errors using centralized middleware.
+
+For async functions, I use try/catch blocks.
+
+In production, proper error handling is important to avoid application crashes and to send meaningful responses to frontend.”
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+Memory leak
+
+“Memory leak happens when memory is not released properly after usage.
+
+Common reasons:
+
+Unused global variables
+Uncleared timers
+Large object references
+
+This can increase memory usage and crash application over time.”
+
+
+---------------------------------------------------------------------------------------------------------------------
+Slow API debugging
+
+If an API is slow in production, first I would try to identify where the latency is coming from.
+I would start by checking logs and monitoring tools to see response time patterns.
+
+Then I would break down the API flow — whether the delay is in database queries, external API calls, or application logic.
+
+I would use tools like APM (New Relic, Datadog) or add timing logs to measure each step.
+
+If the issue is in the database, I would check query performance and indexing.
+If it’s external APIs, I would add timeouts or caching.
+
+Finally, I would optimize the bottleneck, deploy the fix, and monitor to ensure stability.
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+CORS stands for Cross-Origin Resource Sharing.
+“CORS is used to allow communication between different origins.
+
+For example, frontend may run on one domain and backend on another domain.
+
+In Express I usually configure CORS middleware to allow only required domains.”
+
+app.use(cors({
+  origin: ["https://example.com"]
+}));
+
+
+-------------------------------------------------------------------------------------------------------------
+
+Middleware
+
+“Middleware is a function that executes between request and response cycle in Express.
+
+I commonly use middleware for:
+
+Authentication
+Logging
+Validation
+Error handling
+
+For example, in my projects I used JWT middleware to validate user tokens before accessing protected APIs.”
+
+
+
+--------------------------------------------------------------------------------------------------
+
+
+How do you implement authentication end-to-end?
+
+“I implement authentication using JWT. On registration, 
+I hash passwords using bcrypt before storing them in the database.
+ On login, I verify credentials and generate a signed JWT token with an expiry time. 
+ The frontend stores the token (preferably in HTTP-only cookies). For protected routes, I use middleware to verify the token 
+ before allowing access. This ensures stateless, scalable authentication.”
+
+-----------------------------------------------------------------------------------------------------------------
+
+Load balancer
+
+“Load balancer is used to distribute incoming requests across multiple servers.
+
+Instead of sending all traffic to one server, requests are balanced between multiple instances.
+
+This helps improve:
+
+Performance
+Scalability
+Fault tolerance
+
+For example, if one server goes down, load balancer can redirect traffic to healthy servers.
+
+In production systems, load balancers are commonly used along with horizontal scaling.”
+
+-----------------------------------------------------------------------------------------------------------------
+Redis
+
+“Redis is an in-memory key-value database mainly used for caching and performance optimization.
+
+Instead of querying database repeatedly, frequently accessed data can be stored in Redis.
+
+This reduces database load and improves API response time.
+
+I mainly used Redis for:
+
+API caching
+Session storage
+OTP storage
+Rate limiting”
+
+-----------------------------------------------------------------------------------------------------------------
+
+require() vs import
+“Both are used to import modules in JavaScript.
+
+require() is CommonJS syntax mainly used in older Node.js applications.
+
+import is ES6 module syntax and modern standard.
+
+Nowadays most modern applications prefer import/export.”
+
+-----------------------------------------------------------------------------------------------------------------
+
+“package.json is the main configuration file of Node.js project.
+
+It contains:
+
+Project metadata
+Dependencies
+Scripts
+Project version
+Entry point
+
+It helps manage project packages and scripts.”
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+Microservices
+
+“Microservices architecture divides application into smaller independent services.
+
+Advantages:
+
+Independent deployment
+Better scalability
+Easier maintenance
+
+Example:
+
+Auth service
+Payment service
+Notification service”
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+Microservices communicate with each other mainly using two approaches: synchronous and asynchronous communication.
+
+In synchronous communication, services use HTTP/REST APIs or gRPC, where one service directly calls another 
+and waits for the response.
+
+In asynchronous communication, we use message queues like Kafka or RabbitMQ, where services communicate 
+via events without waiting for an immediate response.
+
+In real-world systems, we prefer asynchronous communication for better scalability and 
+fault tolerance, especially for background or heavy tasks.
+
+
+-------------------------------------------------------------------------------------------------------------
+How Do You Secure APIs
+
+“I secure APIs using:
+
+JWT authentication
+HTTPS
+Input validation
+Rate limiting
+Helmet middleware
+Role-based authorization
+Environment variables for secrets”
+
+-------------------------------------------------------------------------------------------------------------
+Backend Architecture
+
+“In my recent project, React frontend communicates with Node.js backend through REST APIs.
+
+Express handles routing and middleware.
+
+JWT authentication is used for protected APIs.
+
+MongoDB stores chatbot and user-related data.
+
+For performance optimization, we added pagination and caching for frequently used APIs.
+
+We integrated third-party payment gateways and notification services.
+
+For maintainability, we followed modular folder structure, centralized error handling, and reusable service layers.”
+
+
+--------------------------------------------------------------------------------------------------------------
+Buffer
+
+A Buffer in Node.js is used to handle binary data directly in memory.
+
+Since JavaScript does not natively support binary data, Node.js provides Buffer to work with raw data like files, network streams, or TCP data.
+
+Buffers are fixed-size and are mainly used when dealing with I/O operations such as reading files or handling streams.
+
+-------------------------------------------------------------------------------------------------------------
+Streams
+
+“Streams process data in chunks instead of loading entire data into memory.
+
+This improves performance and memory usage.
+
+I mainly used streams for:
+
+File uploads
+Large file processing
+CSV handling”
+
+-------------------------------------------------------------------------------------------------------------
+crypto
+
+The crypto module in Node.js is used for performing cryptographic operations like hashing, encryption, and decryption.
+It is commonly used for securing data, such as hashing passwords using algorithms like bcrypt or SHA,
+and generating secure tokens.
+It helps ensure data security, integrity, and authentication in applications.
+
+-------------------------------------------------------------------------------------------------------------
+
+WebSocket and polling :
+
+WebSocket and polling are techniques used for communication between client and server. 
+Polling repeatedly requests data from the server at intervals, while WebSocket establishes a persistent connection 
+that allows real-time, bidirectional communication.
+
+
+----------------------------------------------------------------------------------------------------------
+
+
+
+How do handle large file upload efficiently
+
+To handle large file uploads efficiently in Node.js, I avoid loading the entire file into memory and
+instead use streams to process the file in chunks.
+I use libraries like multer or busboy which support streaming uploads.
+The file is either stored directly on disk or uploaded to cloud storage like S3 using streams.
+I also set file size limits, validate file types, and use chunked uploads for very large files.
+For scalability, I handle uploads asynchronously and, if needed, process files using background jobs.
+
+-------------------------------------------------------------------------------------------------------------
+
+
+“A typical payment flow starts when a user initiates a transaction from the frontend.
+The request goes to the backend, which then interacts with a payment gateway like Stripe or Razorpay.
+
+The gateway processes the payment by communicating with banks or card networks.
+Once the transaction is completed, the gateway sends a response back to our backend, and we update
+the transaction status in the database.
+
+Additionally, we handle asynchronous updates using webhooks to ensure the final status is accurate.”
+
+-------------------------------------------------------------------------------------------------------------
+
+“Idempotency ensures that even if the same request is sent multiple times, it only produces one result.
+
+In payments, this is critical to prevent duplicate transactions.
+
+We generate a unique idempotency key for each transaction and store it.
+If the same request comes again, we return the previous result instead of processing it again.”
+
+-------------------------------------------------------------------------------------------------------------
+
+“In payment systems, handling failures properly is very critical.
+
+We used idempotency keys to ensure that even if a request is retried, it does not create duplicate transactions.
+
+We also implemented retry mechanisms with exponential backoff for temporary failures.
+
+In case of failure, we logged the error and updated the transaction status accordingly so that it can be tracked and resolved.
+
+We also ensured that the system maintains consistency by handling partial failures properly.”
+
+-------------------------------------------------------------------------------------------------------------
+How did you ensure security
+
+
+We implemented token-based authentication using JWT, where each request is validated before accessing any resource.
+
+We also enforced HTTPS to ensure all data is encrypted during transmission.
+
+On top of that, we implemented role-based access control to restrict user permissions based on roles like admin, agent, or customer.
+
+For input security, we validated all inputs to prevent attacks like SQL injection and XSS.
+
+Additionally, we followed best practices like storing sensitive data securely and avoiding exposure of critical information in APIs.”
+
+-----------------------------------------------------------------------------------------------------------------------
+
+“We follow Agile methodology, mainly Scrum, to deliver features in an iterative and incremental way.
+Our sprint cycle is usually 2 weeks, where we start with sprint planning and break down tasks into user stories using Jira.
+
+We have daily standups to track progress and blockers, followed by development and code reviews.
+At the end of the sprint, we do a demo to showcase completed features and a retrospective to identify improvements.
+
+This process helps us adapt to changing requirements quickly and ensures continuous delivery of value.”
