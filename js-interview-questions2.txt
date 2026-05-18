@@ -202,9 +202,9 @@ console.log(p1.name);
 
 call, apply, bind
 
-“call, apply, and bind are used to explicitly control the value of this.
-call accepts arguments individually, apply accepts arguments as an array, and bind returns a new function that can be invoked later.
-bind is commonly used in event handlers and callbacks.”
+The call() method invokes a function immediately and allows passing arguments individually.
+apply() is similar to call but arguments are passed as an array.
+bind() does not execute the function immediately. Instead, it returns a new function with this permanently bound.
 
 function greet(city, country) {
   console.log(this.name, city, country);
@@ -221,9 +221,8 @@ boundFn();
 =============================================================================================================================
 Currying
 
-“Currying is a functional programming technique where a function takes arguments one at a time.
-It helps in reusability and partial application.
-In real projects, currying is often used in utility functions and configuration-based logic.”
+Currying is a technique in functional programming where a function with multiple arguments is transformed
+into a sequence of functions that each take one argument.
 
 function sum(a){
     let total = a
@@ -455,3 +454,119 @@ const p1 = new Person("Logesh");
 p1.sayHello(); // Hello Logesh
 
 =============================================================================================================================
+Memoization
+
+Memoization is an optimization technique where we cache the result of expensive function calls 
+and return the cached result when the same inputs occur again.
+
+
+function memoize(fn){
+  const cache = {}
+
+  return function(n){
+    if(cache[n]){
+      return cache[n]
+    }
+
+    const result = fn(n)
+    cache[n] = result
+    return result
+  }
+
+=============================================================================================================================
+
+Callbacks
+
+A callback is a function that is passed as an argument to another function
+and is executed after a specific task is completed.
+Callbacks are commonly used for asynchronous operations like API calls, file reading, or event handling.
+
+
+
+
+
+=============================================================================================================================
+Chaining
+
+
+Chaining means calling multiple methods sequentially where each method returns an object that allows the next method to be called.
+
+example
+const result = [1,2,3,4]
+  .map(x => x * 2)
+  .filter(x => x > 4)
+  .reduce((a,b)=>a+b,0)
+=============================================================================================================================
+Optional chaining
+
+
+Optional chaining (?.) is used to safely access nested object properties
+without throwing an error if an intermediate property is null or undefined.
+
+Optional chaining is commonly used when working with API responses where some fields may be missing.
+
+=============================================================================================================================
+Event delegation
+
+Event delegation is a technique where a single event listener is attached
+to a parent element to handle events for multiple child elements using event bubbling.
+
+
+=============================================================================================================================
+
+
+Generator functions allow us to pause and resume function execution using the yield keyword.
+Generators are declared using function*.
+
+Generators are useful for lazy evaluation, iteration control, and handling asynchronous flows.
+
+
+function* numbers(){
+  yield 1
+  yield 2
+  yield 3
+}
+
+const gen = numbers()
+
+console.log(gen.next())
+console.log(gen.next())
+
+=============================================================================================================================
+Microtask and macrotask
+
+A Microtask is a task that gets executed immediately after the current synchronous code finishes but before the next macrotask.
+Microtasks have higher priority than macrotasks.
+
+A Macrotask is a task that gets executed in the task queue after microtasks are completed.
+
+
+=============================================================================================================================
+Promise Chaning
+
+Promise chaining is a technique where multiple .then() methods are attached to a promise so that 
+asynchronous operations execute sequentially.
+
+Each .then() returns a new promise, allowing the next operation to run after the previous one is completed.
+
+Promise chaining helps handle multiple asynchronous operations in a sequential and readable way without creating nested callbacks.
+
+
+=============================================================================================================================
+
+Memory Leak
+
+A memory leak in React happens when a component keeps references to resources like timers, event listeners, API calls,
+or closures even after the component is unmounted, preventing garbage collection and causing unnecessary memory usage.
+
+
+=============================================================================================================================
+Interface and Type 
+
+Both interface and type are used to define the structure of data in TypeScript. The main difference is that interfaces 
+are primarily used for object structures and support extension and declaration merging, while types are more flexible 
+and can represent primitives, unions, tuples, and complex types.
+
+
+=============================================================================================================================
+
