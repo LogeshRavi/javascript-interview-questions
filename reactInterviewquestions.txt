@@ -1,0 +1,310 @@
+1.What is React Fiber? How is it different from the old reconciliation algorithm?
+
+React Fiber is a re-implementation of React’s reconciliation algorithm introduced in React 16.
+Earlier, React used a synchronous stack-based reconciliation which blocked the main thread during large updates.
+Fiber breaks rendering into small units of work, allows pausing, resuming, and prioritizing updates.
+This makes React better at handling animations, user input, and large component trees without UI freezing.
+
+
+========================================================================================
+
+2.How does React determine when to re-render a component?
+
+React re-renders a component when its state, props, or context changes, or when its parent re-renders.
+It compares previous and next values using reference checks and then runs reconciliation using the Virtual DOM.
+A re-render doesn’t always mean a DOM update—React only updates the DOM when there’s an actual difference.
+
+========================================================================================
+
+3.What is the Concurrent feature in React?
+
+“Concurrent features in React allow rendering to be interruptible and priority-based.
+React can pause low-priority updates, handle urgent user interactions first, and resume work later.
+This improves responsiveness and prevents UI blocking, especially in large applications.”
+
+useTransition - Used to mark updates as low priority.
+useDeferredValue - Delays updating a value until urgent work is finished.
+
+
+========================================================================================
+
+4.What is React batching behavior? What changed in React 18?
+
+“Batching is React’s optimization where multiple state updates are grouped into a single render.
+Before React 18, batching only worked inside React event handlers.
+React 18 introduced automatic batching, so even updates inside async code like promises or setTimeout are batched,
+resulting in fewer renders and better performance.”
+ 
+ 
+example:
+
+Before React 18
+
+✅ Batched (single re-render)
+
+onClick={() => {
+  setA(1);
+  setB(2);
+}}
+
+❌ NOT batched (multiple re-renders)
+setTimeout(() => {
+  setA(1); // re-render
+  setB(2); // re-render again
+}, 1000);
+
+After React 18
+
+✅ Batched (single re-render)
+
+setTimeout(() => {
+  setA(1);
+  setB(2);
+}, 1000);
+
+========================================================================================
+
+5.What is Suspense ?
+
+Suspension is when a cc nent pauses rendering because an async dependency is not ready.
+The component throws a Promise, React catches it, shows a Suspense fallback, 
+and resumes rendering once the Promise resolves.
+
+
+========================================================================================
+
+6.What is useImperativeHandle ?
+
+useImperativeHandle is a React hook used with forwardRef to expose a controlled set of methods from a
+child component to its parent.It’s useful for imperative actions like focusing inputs, opening modals, or
+integrating third-party libraries, but should be used sparingly.
+ 
+example
+
+Parent Component:-
+
+
+const ref = useRef();
+
+<button onClick={() => ref.current.focus()}>
+  Focus Input
+</button>
+
+<InputBox ref={ref} />
+
+
+Child Component:-
+
+
+import { forwardRef, useImperativeHandle, useRef } from "react";
+
+const InputBox = forwardRef((props, ref) => {
+  const inputRef = useRef();
+
+  useImperativeHandle(ref, () => ({
+    focus() {
+      inputRef.current.focus();
+    },
+    clear() {
+      inputRef.current.value = "";
+    }
+  }));
+
+  return <input ref={inputRef} />;
+});
+
+
+
+========================================================================================
+
+7.How to handle large lists in React?
+
+“To handle large lists in React, I avoid rendering all items at once. I use list virtualization to render only 
+visible items, pagination or infinite scrolling to reduce data size, and memoization to 
+prevent unnecessary re-renders. I also ensure stable keys and optimized event handlers for performance.”
+
+
+========================================================================================
+
+8.How does React handle hydration in SSR, and what problems can arise?
+
+During SSR, React sends pre-rendered HTML to the browser. Hydration is the process where React attaches event handlers
+and makes that HTML interactive.Problems arise when server-rendered HTML doesn’t match the client render, 
+causing hydration mismatches, warnings, or full re-renders.
+
+========================================================================================
+
+9.My React app suddenly became slow after adding a new feature — how do I find and fix the issue?
+
+
+When a React app becomes slow after a new feature, I first reproduce and isolate the problem. 
+I then use React DevTools Profiler to identify unnecessary re-renders or expensive components.
+Common fixes include memoizing components, optimizing large lists, reducing state scope, 
+avoiding heavy computations in render, and improving async handling. Finally, I re-measure performance to confirm the fix.
+
+
+========================================================================================
+
+
+10.How to prevent the Login page from being accessible after the user is logged in?
+
+
+
+
+
+========================================================================================
+
+11.How to handle API errors gracefully in the UI
+
+“I handle API errors by maintaining loading and error states. I wrap API calls in try/catch, 
+show friendly error messages, and provide retry options. This ensures the UI remains stable and user-friendly
+even when APIs fail.”
+
+========================================================================================
+
+12.How to optimize bundle size in a large React app?
+
+In large React apps, I optimize bundle size mainly through code splitting and lazy loading, especially at the route level.
+I analyze bundles to find heavy dependencies, import only required modules, remove unused code, 
+and ensure production builds are properly optimized. This significantly improves load time and performance.
+
+code Splitting
+Tree Shaking
+Dynamic imports
+Compress Assest
+
+========================================================================================
+
+
+How do you implement authentication end-to-end?
+
+“I implement authentication using JWT. On registration, 
+I hash passwords using bcrypt before storing them in the database.
+On login, I verify credentials and generate a signed JWT token with an expiry time. 
+The frontend stores the token (preferably in HTTP-only cookies). For protected routes, I use middleware to verify the token 
+before allowing access. This ensures stateless, scalable authentication.”
+ 
+
+========================================================================================
+UseEffect and useLayoutEffect
+
+useEffect runs after the DOM is painted, so it does not block UI rendering. 
+It is typically used for API calls and subscriptions.
+
+useLayoutEffect runs synchronously before the browser paints the screen, 
+which allows you to make DOM changes before the user sees them.
+
+
+========================================================================================
+Redux Reducer
+
+reducer is a pure function that takes the previous state and an action as arguments, and returns the next state of the application
+
+
+========================================================================================
+
+Redux
+
+Redux follows a unidirectional data flow, meaning data moves in one direction through the application.
+
+1.User triggers an action
+2.Action is sent to the reducer
+3.Reducer updates the store
+4.React components receive updated state and re-render
+
+Component
+   ↓
+Dispatch Action
+   ↓
+Reducer
+   ↓
+Redux Store Updated
+   ↓
+UI Re-render
+
+
+========================================================================================
+Redux saga
+
+
+Redux Saga is a middleware used in Redux to handle asynchronous side effects like:
+
+API calls
+
+background tasks
+
+delayed actions
+
+Redux Saga uses Generator Functions (function*) to manage asynchronous flows in a more readable way.
+
+========================================================================================
+Redux Thunk 
+
+Redux Thunk is a middleware that allows action creators to return a function instead of an action object.
+It is used to handle logic with side effects, most commonly asynchronous operations like API calls, 
+before dispatching actions to the Redux store.
+
+
+========================================================================================
+Redux Toolkit
+
+Redux Toolkit is the official recommended library for writing Redux logic. It simplifies Redux development by reducing boilerplate code and providing built-in utilities for creating reducers, actions, and handling asynchronous logic.
+
+Before Redux Toolkit, Redux required a lot of manual setup, such as:
+
+defining action types
+
+writing action creators
+
+creating reducers
+
+configuring middleware
+
+Redux Toolkit simplifies this process.
+
+
+
+========================================================================================
+SSR vs CSR
+
+In SSR, the server generates the complete HTML page and sends it to the browser.
+The browser displays the content immediately, and then React hydrates it to make it interactive.
+example: Next.js
+Advantage:
+better SEO
+Faster initial load
+good for content-heavy apps
+
+In CSR, the server sends a minimal HTML file and JavaScript bundle. React runs in the browser and renders the UI dynamically.
+example:React 
+Advantage
+fast navigation after load
+less server load
+better for dynamic apps
+
+
+
+========================================================================================
+
+“In my React projects, I follow a modular and scalable folder structure to maintain clean separation of concerns.
+I usually divide the application into components, pages, hooks, services, and utilities.
+Reusable UI goes into components, route-level logic goes into pages, and API calls are handled in a separate services layer.
+I also use custom hooks to move business logic out of components to keep them clean and maintainable.
+
+This structure helps in scaling the application easily and makes it easier for new developers to understand the codebase.
+In my recent project, this approach helped us maintain consistency across the team and improve development speed.
+
+
+
+
+
+// Machine coding
+✅ Product Table
+✅ Search Input
+✅ Autocomplete Dropdown
+✅ Category Filter
+✅ Price Sorting
+✅ Pagination
+✅ Loading State
+✅ Error Handling
+✅ Debounced API Calls
