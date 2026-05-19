@@ -1,0 +1,103 @@
+1.What is the difference between HTML and HTML5?
+
+HTML5 is the latest version of HTML and provides:
+
+Semantic tags
+Multimedia support
+Local storage
+Better APIs
+
+
+2.What are semantic tags?
+
+Semantic tags describe the meaning of content clearly.
+<header>
+<footer>
+<article>
+<section>
+<nav>
+
+
+3.Difference between div and span
+
+| div              | span                          |
+| ---------------- | ----------------------------- |
+| Block element    | Inline element                |
+| Takes full width | Takes only content width      |
+| Used for layout  | Used for small inline styling |
+
+
+
+4.Difference between id and class?
+
+| id            | class         |
+| ------------- | ------------- |
+| Unique        | Reusable      |
+| Access with # | Access with . |
+
+
+
+-------------------------------------------------------------------------------
+
+1. Difference between Flexbox and Grid?
+
+| Flexbox              | Grid               |
+| -------------------- | ------------------ |
+| One-dimensional      | Two-dimensional    |
+| Row OR column        | Row AND column     |
+| Better for alignment | Better for layouts |
+
+Flexbox → Navbar/cards
+Grid → Full page layouts/dashboard
+
+
+
+2. What is CSS Box Model
+
+Box model contains:
+
+Content
+Padding
+Border
+Margin
+
+Total Width=Content+Padding+Border+Margin
+
+
+3.Difference between relative, absolute, fixed, sticky?
+
+| Position | Behavior                              |
+| -------- | ------------------------------------- |
+| relative | Relative to itself                    |
+| absolute | Relative to nearest positioned parent |
+| fixed    | Fixed to viewport                     |
+| sticky   | Sticky during scroll                  |
+
+
+4.What is z-index?
+
+z-index controls stacking order of positioned elements.
+
+Higher z-index appears on top.
+
+
+
+
+  dns
+local storage and session storage
+cookies
+media query
+semantic tag and uses
+auth and autheration
+array methods
+map vs foreach
+eventloop
+virtual dom
+advantage of react
+es6
+usememo vs usecallback
+promise
+statemanagement
+redux flow
+
+
