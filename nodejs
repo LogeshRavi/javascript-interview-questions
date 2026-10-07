@@ -15,9 +15,10 @@ Why Node.js is Single Threaded
 
 “Node.js follows a single-threaded event loop architecture.
 
-Even though JavaScript runs in a single thread, Node.js can still handle multiple requests simultaneously using asynchronous operations.
+Even though JavaScript runs in a  single thread, Node.js can still handle multiple requests simultaneously using asynchronous operations.
 
-For example, if one API is waiting for database response, Node.js will not block the entire application. It will continue processing other requests.
+For example, if one API is waiting for database response, Node.js will not block the entire application. 
+It will continue processing other requests.
 
 This makes Node.js lightweight and scalable for I/O-heavy applications.”
 
@@ -28,11 +29,13 @@ Difference between setTimeout, setImmediate, process.nextTick
 
 In Node.js, these three differ based on when they execute in the event loop.
 
-process.nextTick runs immediately after the current call stack, before the event loop continues. It executes before promises, timers, and I/O, so overusing it can block the event loop.
+process.nextTick runs immediately after the current call stack, before the event loop continues. It executes before promises, 
+timers, and I/O, so overusing it can block the event loop.
 
 setTimeout schedules a callback in the timers phase after the specified delay, so it runs after microtasks and I/O polling.
 
-setImmediate runs in the check phase, which is right after I/O callbacks, and is useful when we want to execute logic once I/O is completed.
+setImmediate runs in the check phase, which is right after I/O callbacks, and is useful when we want to execute logic once 
+I/O is completed.
 
 So in short:
 
@@ -119,6 +122,7 @@ Finally, I would optimize the database using indexing, pagination, and possibly 
 
 
 
+I would use auto-scaling to add instances when CPU, memory, or request traffic increases when there is suddern spike
 
 ----------------------------------------------------------------------------------------------------------------
 Error Handling
@@ -165,24 +169,25 @@ Finally, I would optimize the bottleneck, deploy the fix, and monitor to ensure 
 
 
 CORS stands for Cross-Origin Resource Sharing.
-“CORS is used to allow communication between different origins.
+CORS is used to allow communication between different origins.
 
 For example, frontend may run on one domain and backend on another domain.
 
-In Express I usually configure CORS middleware to allow only required domains.”
+In Express I usually configure CORS middleware to allow only required domains.
 
 app.use(cors({
   origin: ["https://example.com"]
 }));
 
 
+
 -------------------------------------------------------------------------------------------------------------
 
 Middleware
 
-“Middleware is a function that executes between request and response cycle in Express.
+Middleware is a function that executes between request and response cycle in Express.
 
-I commonly use middleware for:
+I commonly use middleware for: 
 
 Authentication
 Logging
@@ -208,7 +213,7 @@ I hash passwords using bcrypt before storing them in the database.
 
 Load balancer
 
-“Load balancer is used to distribute incoming requests across multiple servers.
+Load balancer is used to distribute incoming requests across multiple servers.
 
 Instead of sending all traffic to one server, requests are balanced between multiple instances.
 
@@ -220,7 +225,7 @@ Fault tolerance
 
 For example, if one server goes down, load balancer can redirect traffic to healthy servers.
 
-In production systems, load balancers are commonly used along with horizontal scaling.”
+In production systems, load balancers are commonly used along with horizontal scaling.
 
 -----------------------------------------------------------------------------------------------------------------
 Redis
@@ -300,7 +305,7 @@ fault tolerance, especially for background or heavy tasks.
 -------------------------------------------------------------------------------------------------------------
 How Do You Secure APIs
 
-“I secure APIs using:
+I secure APIs using:
 
 JWT authentication
 HTTPS
@@ -308,7 +313,7 @@ Input validation
 Rate limiting
 Helmet middleware
 Role-based authorization
-Environment variables for secrets”
+Environment variables for secrets
 
 -------------------------------------------------------------------------------------------------------------
 Backend Architecture
@@ -381,6 +386,126 @@ I also set file size limits, validate file types, and use chunked uploads for ve
 For scalability, I handle uploads asynchronously and, if needed, process files using background jobs.
 
 -------------------------------------------------------------------------------------------------------------
+Oauth
+
+OAuth is a way to securely allow one application to access another service on behalf of a user.
+For example, with “Login with Google,” we don't share our Google password with the application.
+Google provides an access token, and the application uses that token to access allowed user information.
+The exact data depends on the scopes requested by the application
+
+
+
+
+--------------------------------------------------------------------------------------------------------------
+Access token and refresh token
+
+Access token is a short-lived token used to access protected APIs or resources.
+Refresh token is a longer-lived token used to get a new access token when the old one expires.
+For example, after login, the application uses the access token for API requests, and when it expires, 
+the refresh token is used to obtain a new one without asking the user to log in again.
+
+
+
+--------------------------------------------------------------------------------------------------------------
+How to secure tokens
+
+
+I use HTTPS to protect tokens during transmission and keep access tokens short-lived. For web applications, 
+I prefer storing tokens in HttpOnly, Secure cookies so JavaScript cannot directly access them. 
+I also use refresh token rotation, validate tokens on the backend, and never expose tokens in URLs or logs
+
+
+--------------------------------------------------------------------------------------------------------------
+optimize an API?
+
+
+First, I identify the bottleneck by checking response time, CPU, memory, database queries, and external API latency.
+I optimize database queries using proper indexes, efficient joins, connection pooling, and pagination.
+I use Redis caching for frequently accessed data and reduce unnecessary API calls and response payload size.
+For heavy operations, I use queues or background jobs, and for high traffic I use load balancing, rate limiting, and 
+horizontal scaling.
+Finally, I use logging, monitoring, and APM tools to measure the improvement and continuously monitor the API.
+
+
+
+
+----------------------------------------------------------------------------------------------------
+
+Race conditions
+
+One challenge I faced was handling race conditions in an appointment booking application. 
+For example, if two users try to book the same doctor and time slot at almost the same time, 
+both requests may check the slot and see it as available, which can result in double booking.
+To solve this, I don't rely only on the availability check in Node.js. I use a database transaction and 
+a unique constraint on doctor, date, and time, so only one request can successfully book that slot.
+If another request tries to book the same slot, the database rejects it, and I handle that error in Node.js by 
+returning a 409 Conflict — slot already booked response.
+This ensures that even with multiple concurrent requests, the same appointment slot cannot be booked twice.
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------
+
+I validate the request body before it reaches the business logic. In Node.js, I usually use a schema validation 
+library like Joi or Zod to define required fields, data types, formats, and constraints. If validation fails, 
+I return a 400 Bad Request with clear validation errors. This prevents invalid or unexpected data from 
+reaching the database or business logic.
+
+---------------------------------------------------------------------------------------------------------
+
+Garbage Collection in Node.js is the process of automatically identifying and freeing memory that is no longer being 
+used by the application. Node.js uses the V8 JavaScript engine, which mainly uses a generational garbage collector. 
+Short-lived objects are handled in the young generation, while long-lived objects are moved to the old generation. 
+This helps prevent unnecessary memory usage, but if objects are still referenced accidentally, 
+they cannot be collected and can cause memory leaks
+
+
+---------------------------------------------------------------------------------------------------------
+Zero-Downtime Deployment
+
+I would use a rolling deployment or blue-green deployment so that the existing application continues serving traffic while 
+the new version is deployed.
+For example, with multiple Node.js instances behind a load balancer, I would deploy the new version to one or more instances, 
+run health checks, and then gradually shift traffic to the new version.
+Once the new version is stable, I would remove the old instances. If there is an issue, I can quickly route traffic 
+back to the previous version.
+I would also make sure database migrations are backward compatible, so old and new application versions can 
+work during the deployment.
+
+
+--------------------------------------------------------------------------
+
+
+I choose SQL when the application has structured and relational data where relationships, transactions, and strong consistency 
+are important. For example, in an appointment booking system, users, doctors, appointments, and payments have clear relationships, 
+so I would prefer PostgreSQL or MySQL.
+I choose MongoDB when the data is more flexible or changes frequently, and I need a document-based model with 
+easy horizontal scaling. For example, product catalogs where different products can have different attributes are a
+good use case for MongoDB.
+So, my choice depends on the data structure, relationships, transaction requirements, scalability, and query patterns, 
+rather than simply choosing one database over the other.
+
+
+
+
+
+-------------------------------------------------------------------------
+prevent blocking the Event Loop?
+
+
+I avoid performing CPU-intensive or synchronous operations on the main thread because they can block the Node.js event loop.
+I use asynchronous APIs instead of synchronous methods, and for CPU-heavy operations I use Worker Threads or background jobs. 
+I also use streams for processing large files instead of loading everything into memory, and 
+I monitor event-loop lag in production
+
+
+
+---------------------------------------------------------------------
 
 
 “A typical payment flow starts when a user initiates a transaction from the frontend.
@@ -436,3 +561,15 @@ We have daily standups to track progress and blockers, followed by development a
 At the end of the sprint, we do a demo to showcase completed features and a retrospective to identify improvements.
 
 This process helps us adapt to changing requirements quickly and ensures continuous delivery of value.”
+
+------------------------------------------------------------------------------
+
+To find memory leaks, I first reproduce the issue by repeatedly mounting and unmounting the component or 
+navigating between pages. Then I use Chrome DevTools Memory tab and take heap snapshots before and after the operation, 
+forcing garbage collection where appropriate.
+
+To prevent them, I clean up resources in the useEffect cleanup function. For example, 
+I use clearInterval, removeEventListener, unsubscribe from subscriptions, close WebSockets, disconnect observers, 
+and abort requests when appropriate
+
+------------------------------------------------------------------------------------------
