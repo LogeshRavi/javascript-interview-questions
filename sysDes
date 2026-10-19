@@ -1,0 +1,55 @@
+system design
+
+URL shortner
+
+I would start by defining the core requirement, which is to convert a long URL into a short unique URL and 
+redirect users efficiently when they access it.
+
+At a high level, the system consists of a client, a load balancer, application servers, a database, 
+and a caching layer. When a user submits a long URL, the request goes through a load balancer to the application servers.
+The server generates a unique short code, typically using a Base62 encoding approach
+which converts numbers into a combination of alphanumeric characters to keep the URL short and unique.
+
+  
+This mapping between the short code and the original URL is then stored in the database
+For faster access, especially since redirection is a read-heavy operation,we use a caching layer like Redis to 
+store frequently accessed URLS.When a user hits the short URL, the system first checks the cache. If the mapping is found, 
+it directly redirects the user to the original URL using an HTTP redirect response. If not, it fetches the data from the database,
+updates the cache, and then redirects.
+
+To handle high traffic, the system is designed to scale horizontally using multiple application servers behind a load balancer. 
+We also ensure high availability and low latency by using caching and possibly a CDN for global access.
+
+Additionally, we can extend the system by adding features like expiration time for URLs, analytics such as 
+click count, and rate limiting to prevent abuse.
+
+Overall, the focus of the design is on scalability,fast redirection, and efficient storage while ensuring uniqueness 
+of the generated short URLS
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+Payment Method
+
+To integrate a payment gateway like Stripe or Razorpay, I would design the system with a strong focus on security, 
+reliability, and consistency, especially since it involves financial transactions.
+
+At a high level, the flow starts when a user initiates a payment from the frontend. The request is sent to the backend, 
+where we create a payment order using the payment gateway's API. Instead of handling sensitive card details directly, 
+we rely on the gateway's secure SDK or hosted payment page to ensure PCI compliance.
+
+Once the user completes the payment, the gateway processes it by interacting with banks or card networks and 
+returns an initial response to our backend. However, we do not rely solely on this response, because it may not always be 
+reliable due to network issues.
+
+To ensure consistency, we use webhooks provided by the payment gateway. These are server-to-server callbacks 
+that notify us about the final status of the transaction, whether it is successful or failed. We verify the webhook signature 
+for security and then update the transaction status in our database.
+
+To prevent duplicate payments, we implement idempotency by generating a unique key for each transaction. 
+This ensures that even if the same request is retried, it will not result in multiple charges.
+
+For handling failures, we implement retry mechanisms with exponential backoff and proper logging so that failed transactions 
+can be tracked and resolved.
+
+Overall, the key focus is to ensure secure communication, accurate transaction handling, and reliability using techniques 
+like idempotency, webhooks, and proper error handling
