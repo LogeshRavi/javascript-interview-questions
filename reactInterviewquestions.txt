@@ -8,6 +8,8 @@ This makes React better at handling animations, user input, and large component 
 
 ========================================================================================
 
+
+
 2.How does React determine when to re-render a component?
 
 React re-renders a component when its state, props, or context changes, or when its parent re-renders.
@@ -18,22 +20,23 @@ A re-render doesn’t always mean a DOM update—React only updates the DOM when
 
 3.What is the Concurrent feature in React?
 
-“Concurrent features in React allow rendering to be interruptible and priority-based.
+Concurrent features in React allow rendering to be interruptible and priority-based.
 React can pause low-priority updates, handle urgent user interactions first, and resume work later.
-This improves responsiveness and prevents UI blocking, especially in large applications.”
+This improves responsiveness and prevents UI blocking, especially in large applications.
 
 useTransition - Used to mark updates as low priority.
 useDeferredValue - Delays updating a value until urgent work is finished.
+
 
 
 ========================================================================================
 
 4.What is React batching behavior? What changed in React 18?
 
-“Batching is React’s optimization where multiple state updates are grouped into a single render.
+Batching is React’s optimization where multiple state updates are grouped into a single render.
 Before React 18, batching only worked inside React event handlers.
 React 18 introduced automatic batching, so even updates inside async code like promises or setTimeout are batched,
-resulting in fewer renders and better performance.”
+resulting in fewer renders and better performance.
  
  
 example:
@@ -81,6 +84,9 @@ integrating third-party libraries, but should be used sparingly.
  
 example
 
+
+\
+
 Parent Component:-
 
 
@@ -119,7 +125,7 @@ const InputBox = forwardRef((props, ref) => {
 
 7.How to handle large lists in React?
 
-“To handle large lists in React, I avoid rendering all items at once. I use list virtualization to render only 
+To handle large lists in React, I avoid rendering all items at once. I use list virtualization to render only 
 visible items, pagination or infinite scrolling to reduce data size, and memoization to 
 prevent unnecessary re-renders. I also ensure stable keys and optimized event handlers for performance.”
 
@@ -137,28 +143,40 @@ causing hydration mismatches, warnings, or full re-renders.
 9.My React app suddenly became slow after adding a new feature — how do I find and fix the issue?
 
 
-When a React app becomes slow after a new feature, I first reproduce and isolate the problem. 
-I then use React DevTools Profiler to identify unnecessary re-renders or expensive components.
-Common fixes include memoizing components, optimizing large lists, reducing state scope, 
-avoiding heavy computations in render, and improving async handling. Finally, I re-measure performance to confirm the fix.
+First, I won't directly start optimizing randomly.
+I'll first identify where the performance issue is happening whether it's due to unnecessary re-renders, 
+heavy API calls, large DOM rendering, memory leaks, or expensive calculations.
+
+Step 1: Reproduce the Issue 
+Step 2: Use React DevTools Profiler --> "I use React DevTools Profiler to identify unnecessary re-renders
+Step 3: Fix Unnecessary Re-renders  --> using useMemo and useCallback hooks
+Step 4: Optimize Component Rendering  --> React.memo
+Step 5: Optimize Large Lists --> I use virtualization. Because rendering 5000 DOM elements freezes UI.
+Step 6: API Optimization --> Debounce search API, Pagination, Caching, Parallel API calls, Avoid duplicate API calls
+Step 7: Bundle Size Analysis --> I use webpack bundle analyzer and Code splitting, Lazy loading
 
 
 ========================================================================================
-
-
 10.How to prevent the Login page from being accessible after the user is logged in?
 
+In React, I handle this using a Public Route. If the user is already logged in and tries to access the login page, I 
+redirect them to the dashboard.
 
+I usually store the authentication status in a global state like Redux or in an authentication context, and use React 
+Router's Navigate component to handle the redirection.
 
 
 
 ========================================================================================
+
 
 11.How to handle API errors gracefully in the UI
 
-“I handle API errors by maintaining loading and error states. I wrap API calls in try/catch, 
-show friendly error messages, and provide retry options. This ensures the UI remains stable and user-friendly
-even when APIs fail.”
+An Error Boundary is a React component that catches JavaScript errors in its child components during rendering and 
+displays a fallback UI instead of allowing the entire component tree to crash.
+
+For example, in our contract management dashboard, if the chart component crashes because of unexpected data, 
+we can show an error message for that section while keeping the rest of the dashboard available.
 
 ========================================================================================
 
@@ -189,13 +207,70 @@ before allowing access. This ensures stateless, scalable authentication.”
 UseEffect and useLayoutEffect
 
 useEffect runs after the DOM is painted, so it does not block UI rendering. 
-It is typically used for API calls and subscriptions.
+It is typically used for API calls, a timer, an event listner and subscriptions.
 
 useLayoutEffect runs synchronously before the browser paints the screen, 
 which allows you to make DOM changes before the user sees them.
 
 
 ========================================================================================
+HOC 
+
+A Higher-Order Component, or HOC, is a function that takes a component as input and returns a new component with 
+additional functionality.
+
+We use it to reuse common logic across multiple components without duplicating code.
+
+For example, if multiple pages in our application need authentication checking, we can create an HOC that checks whether the user 
+is logged in and allows access only when authenticated.
+
+========================================================================================
+useReducer
+
+useReducer is a React hook I use to manage state when the state logic becomes more complex or when multiple state updates are related.
+
+It works with a reducer function that receives the current state and an action, then returns the next state.
+
+For simple state like a search input, I use useState. But for something like a form with loading, success, and error states, 
+useReducer can make the logic easier to organize and maintain.
+
+================================================================================================
+UseMemo
+
+useMemo and useCallback are React performance optimization hooks. 
+useMemo memoizes the result of a calculation
+For example, I might use useMemo for filtering a large list  
+
+
+useMemo:
+  const result = useMemo(() => {
+    console.log("Calculating...");
+    return 10 * 10;
+  }, []);
+  
+
+
+=============================================================================================
+useCallback
+
+useMemo and useCallback are React performance optimization hooks.
+useCallback memoizes a function reference
+For example, I might use useCallback when passing an event handler to a child component wrapped in React.memo
+
+    const sayHello = useCallback(() => {
+    console.log("Hello!");
+  }, []);
+
+=============================================================================================
+
+
+React.memo is used to optimize functional components by skipping a render when their props are unchanged. 
+It performs a shallow comparison of props by default. If we pass new object or function references on every render, 
+the optimization may not work,
+
+
+
+=============================================================================================
 Redux Reducer
 
 reducer is a pure function that takes the previous state and an action as arguments, and returns the next state of the application
@@ -248,11 +323,15 @@ before dispatching actions to the Redux store.
 ========================================================================================
 Redux Toolkit
 
-Redux Toolkit is the official recommended library for writing Redux logic. It simplifies Redux development by reducing boilerplate code and providing built-in utilities for creating reducers, actions, and handling asynchronous logic.
+Redux Toolkit is the official recommended library for writing Redux logic. It simplifies Redux development by 
+reducing boilerplate code and  providing built-in utilities for creating 
+
+, actions, and handling asynchronous logic.
 
 Before Redux Toolkit, Redux required a lot of manual setup, such as:
 
 defining action types
+
 
 writing action creators
 
@@ -283,7 +362,6 @@ less server load
 better for dynamic apps
 
 
-
 ========================================================================================
 
 “In my React projects, I follow a modular and scalable folder structure to maintain clean separation of concerns.
@@ -295,7 +373,154 @@ This structure helps in scaling the application easily and makes it easier for n
 In my recent project, this approach helped us maintain consistency across the team and improve development speed.
 
 
+--------------------------------------------------------------------------------
+Why does useEffect sometimes run twice 
 
+
+In development, React Strict Mode can intentionally re-run effects to help detect bugs. 
+It does not mean the effect will behave the same way in production
+
+
+-----------------------------------------------------------------------------------
+
+Function / class component
+
+function --> simple js function, use hooks, light weight
+class --> use lifecycle method, this keywords, more boilerplate 
+
+-----------------------------------------------------------------------------------
+controlled and un controlled component
+
+controlled ---> form inputs are managed by the react states
+
+
+uncontrolled -->  inputs are managed by the DOM using ref
+
+
+--------------------------------------------------------------------------
+Have you created custom hooks? Explain one.
+
+Yes, I have worked with custom hooks in React to reuse logic across multiple components.
+
+For example, I can create a custom hook called useFetch to handle API calls, loading state, and error handling. 
+Instead of writing the same logic in every component, I can reuse this hook wherever I need to fetch data.
+
+It also makes the components cleaner and easier to maintain
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+Redux vs Context API 
+
+In my React projects, I choose between Context API and Redux based on the complexity of the application and how the state is shared.
+
+I use Context API for relatively simple global data, such as theme, language, or authentication information, 
+where updates and state management are straightforward.
+
+I prefer Redux Toolkit when the application has complex shared state, multiple components updating the same data, 
+or more involved business logic
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+Microfrontend is an architecture where we split a large frontend application into smaller, independently developed and 
+deployed applications. Each team can own a particular feature using React, and we combine those features into 
+one user-facing application.
+
+For example, in an enterprise application, we might have separate microfrontends for the dashboard, contract management, 
+and user administration. Each team can develop and deploy its feature independently, instead of releasing the entire 
+frontend every time.
+
+---------------------------------------------------------------------------------------------------------------------------
+how to run micro frontend or Module Federation
+
+
+To run a microfrontend application, we usually run each microfrontend as a separate application on its own port during development, 
+along with a host or shell application.
+
+For example, in a React project using Module Federation, I would start the Products microfrontend on port 5001 and 
+the host application on port 5000. The host loads the remote component through the remote entry file, so users can access 
+everything through the host application.
+
+In development, I run each application using npm run dev in separate terminals. In production, each microfrontend 
+can be built and deployed independently, and the host loads it from its deployed URL.
+
+--------------------------------------------------------------------------------------------------------------------
+
+ What is "React.memo()"? How is it different from "useMemo()" and "useCallback()"?
+
+React.memo()" is a Higher-Order Component (HOC) that prevents a functional component from re-rendering 
+if its props have not changed.
+
+By default, when a parent component re-renders, all of its child components also re-render—even if their props remain the same. 
+"React.memo()" optimizes this behavior by performing a shallow comparison of props.
+
+---------------------------------------------------------------------------------
+race conditions
+
+
+A common example is a search box where multiple API requests can be in flight at the same time. 
+I use AbortController to cancel the previous request when a new search starts, or use a request ID to ensure only 
+the latest response updates the state. This prevents an older response from overwriting newer data
+
+
+
+
+----------------------------------------------------------------------------------
+
+
+
+
+
+---------------------------------------------------------------------------------
+
+🔹 1. Authentication
+Use secure authentication mechanisms such as JWT or session-based authentication to verify the user's identity.
+🔹 2. Authorization
+Authentication tells us who the user is. Authorization determines what the user is allowed to do.
+For example, a normal user shouldn't be able to access admin-only APIs.
+🔹 3. Input Validation
+Never trust data coming from the client.
+Validate request body, query parameters, and URL parameters before processing them.
+🔹 4. Password Security
+Never store plain-text passwords in DB.
+Use strong password hashing algorithms such as bcrypt or Argon2.
+🔹 5. API Rate Limiting
+Limit how frequently a client can call your APIs.
+This helps protect login, OTP, search, and other sensitive endpoints from excessive requests.
+🔹 6. Protect Sensitive Data
+Never expose:
+• Passwords
+• JWT secrets
+• Database credentials
+• API keys
+• Private configuration
+
+Use environment variables and proper secret management.
+🔹 7. HTTP Security Headers
+Use security headers to reduce common browser-based attacks.
+For Express applications, middleware such as Helmet can help configure several security-related headers.
+🔹 8. MongoDB Security
+Use:
+• Proper indexes
+• Access controls
+• Strong database credentials
+• Network restrictions
+• Safe query construction
+Avoid directly trusting user input in database queries.
+🔹 9. CORS Configuration
+Don't blindly allow requests from every origin.
+Configure CORS according to the domains that actually need access to your API.
+🔹 10. Logging & Monitoring
+Security doesn't end after deployment.
+Monitor:
+• Failed login attempts
+• Suspicious API activity
+• Server errors
+• Unusual traffic
+• Authentication failures
 
 
 // Machine coding
@@ -308,3 +533,6 @@ In my recent project, this approach helped us maintain consistency across the te
 ✅ Loading State
 ✅ Error Handling
 ✅ Debounced API Calls
+
+
+window.innerHeight + window.scrollY >= document.body.offsetHeight - 100
