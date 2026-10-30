@@ -1,15 +1,17 @@
 Execution Context
 
-“Execution context is the environment where JavaScript code is executed.
+Execution context is the environment where JavaScript code is executed.
 Each execution context has two phases: memory creation and execution.
 In memory phase, variables are initialized with undefined and functions are fully hoisted.
 Then in execution phase, values are assigned and code runs line by line.
-JavaScript first creates the global execution context and then creates a new execution context for every function call.”
+JavaScript first creates the global execution context and then creates a new execution context for every function call.
+
+
 
 
 💻 Example
 var a = 10;
-
+  
 function test() {
   var b = 20;
   console.log(a + b);
@@ -24,6 +26,7 @@ test = function(){}
 Execution Phase:
 a = 10
 b = 20
+   
 
 
 =============================================================================================================================
@@ -54,8 +57,8 @@ Timeout
 
 Hoisting
 
-“Hoisting means variable and function declarations are moved to the top of their scope during the memory creation phase.
-Variables declared with var are hoisted and initialized with undefined, whereas function declarations are fully hoisted.”
+Hoisting means variable and function declarations are moved to the top of their scope during the memory creation phase.
+Variables declared with var are hoisted and initialized with undefined, whereas function declarations are fully hoisted.
 
 
 💻 Example
@@ -132,6 +135,10 @@ Closures (⭐ MOST IMPORTANT ⭐)
 “A closure is a function that remembers its lexical scope even after the outer function has finished execution.
 Closures are commonly used for data hiding, maintaining state, and in cases like debouncing and currying.”
 
+closures can contribute to memory leaks if a closure keeps references to objects that are no longer needed. 
+The closure itself isn't a memory leak; the problem is when something remains reachable through the closure and 
+therefore cannot be garbage-collected.
+
 💻 Example
 function outer() {
   let count = 0;
@@ -152,9 +159,10 @@ fn(); // 2
 
 this Keyword (ALL CASES)
 
-“The value of this depends on how a function is called.
+The value of 'THIS' depends on how a function is called.
 In normal functions, this refers to the calling object, but arrow functions do not have their own this and instead inherit it from the lexical scope.
-In constructor functions, this refers to the newly created object.”
+In constructor functions, this refers to the newly created object.
+
 
 💻 Different Cases
 Global Scope
@@ -193,7 +201,8 @@ obj.show(); // undefined
 Constructor Function
 function Person(name) {
   this.name = name;
-}
+
+ 
 const p1 = new Person("Logesh");
 console.log(p1.name);
 
@@ -209,6 +218,7 @@ bind() does not execute the function immediately. Instead, it returns a new func
 function greet(city, country) {
   console.log(this.name, city, country);
 }
+
 
 const user = { name: "Logesh" };
 
@@ -242,9 +252,13 @@ console.log(sum(10)(20)(30)())
 
 Debounce & Throttle
 
-“Debounce delays the function execution until the event stops firing, whereas throttle ensures a function is executed at regular intervals.
+Debounce delays the function execution until the event stops firing, whereas throttle ensures a function is executed at regular intervals.
 Debounce is useful for search inputs, and throttle is useful for scroll or resize events.
-Both are used to improve performance and avoid unnecessary API calls.”
+Both are used to improve performance and avoid unnecessary API call.
+
+For example, in a search box, instead of calling the API for every keystroke, we wait until the user stops typing 
+
+for 500 milliseconds and then make the API call.
 
 💻 Example (Search Input)
 function debounce(fn, delay) {
@@ -363,7 +377,8 @@ Array.prototype.myReduce = function (callback, initialValue) {
 
 4.Polyfill for call()
 
-Function.prototype.myCall = function (context, ...args) {
+Function.prototyp
+e.myCall = function (context, ...args) {
   context = context || window;
   context.fn = this;
   context.fn(...args);
@@ -394,9 +409,12 @@ Function.prototype.myBind = function (context, ...args) {
 
 shallow vs deep copy
 
-“A shallow copy copies only the first level of an object, so nested objects still share the same reference.
-A deep copy creates a completely independent copy of all nested objects.
-In projects, shallow copy is usually enough for state updates, but deep copy is required when nested data must not mutate.”
+A shallow copy copies only the first level of an object, so nested objects still share the same reference.
+So, if I modify a nested object, the original object also gets updated.
+
+A deep copy creates a separate copy of nested objects too, so changes in the copied object won't affect the original
+
+
 
 
 1.example for shallow copy
@@ -411,7 +429,7 @@ shallow1.address.city = "Bangalore";
 console.log(obj1.address.city); // Bangalore ❗
 
 
-2.example for deep copy
+2.example for deep  copy
 
 
 const obj2 = { name: "JS", address: { city: "Chennai" } };
@@ -436,24 +454,23 @@ Arrow functions are best suited for callbacks, while normal functions are prefer
 
 Prototypes 
 
-“JavaScript uses prototypal inheritance.
-Objects inherit properties from their prototype through the prototype chain.
-This avoids duplication and improves memory efficiency.”
+In JavaScript, prototype inheritance means an object can access properties and methods from another object through its prototype.
 
+Instead of creating the same method for every object, we can share it through the prototype. This helps us 
+reuse code and avoid unnecessary duplication
 
-💻 Example
-function Person(name) {
-  this.name = name;
+const user = {
+  greet() {
+    console.log("Hello !")
+  }
 }
 
-Person.prototype.sayHello = function () {
-  console.log("Hello " + this.name);
-};
+const employee = Object.create(user)
+employee.greet();
+   
+====================================
 
-const p1 = new Person("Logesh");
-p1.sayHello(); // Hello Logesh
-
-=============================================================================================================================
+=========================================================================================
 Memoization
 
 Memoization is an optimization technique where we cache the result of expensive function calls 
@@ -477,15 +494,46 @@ function memoize(fn){
 
 Callbacks
 
-A callback is a function that is passed as an argument to another function
-and is executed after a specific task is completed.
-Callbacks are commonly used for asynchronous operations like API calls, file reading, or event handling.
+In JavaScript, a callback is a function that we pass as an argument to another function, and that function calls it when needed.
 
+In my projects, I use callbacks when handling API responses, event handlers, or asynchronous operations
 
+function getUser(name, callback) {
+  console.log("User:", name);
+  callback();
+}
+
+function showMessage() {
+  console.log("User details loaded");
+}
+
+getUser("Logesh", showMessage);
+
+=============================================================================================================================
+Callback hell
+
+Callback hell happens when we have multiple asynchronous operations that depend on each other, and we keep nesting callbacks 
+inside callbacks. The code becomes difficult to read, maintain, and handle errors.
+
+In a real project, imagine we need to fetch user details, then fetch their orders, and finally fetch payment details. If we handle
+every step using nested callbacks, the code can become messy
+
+We can avoid this using Promises or async/await.
 
 
 
 =============================================================================================================================
+
+Why are arrow functions not hoisted?
+
+Actually, arrow functions are not hoisted in the same way as normal function declarations. If I store an arrow function in a 
+const or let variable, the variable exists in the Temporal Dead Zone until its declaration is executed. So, if I try to call 
+it before declaring it, JavaScript throws a ReferenceError.
+
+In contrast, normal function declarations are fully hoisted, so we can call them before their definition.
+
+===============================================================================================================================
+
 Chaining
 
 
@@ -508,11 +556,27 @@ Optional chaining is commonly used when working with API responses where some fi
 =============================================================================================================================
 Event delegation
 
+
 Event delegation is a technique where a single event listener is attached
 to a parent element to handle events for multiple child elements using event bubbling.
 
-
+In my React or JavaScript applications, this is useful when rendering dynamic lists, because newly added 
+items can also be handled without adding individual listeners
 =============================================================================================================================
+Event bubbling
+
+Event bubbling means when I click a child element, the event starts from that child and travels upward to its parent elements. 
+For example, if I click a button inside a div, the button's event fires first, then the parent div event fires.
+
+Real-time use: Useful when we want a parent component to respond to events originating from its child elements.
+============================================================================================================================
+Event capturing
+
+
+Event capturing is the opposite direction. The event travels from the outer parent elements down to the target element. 
+We can enable capturing by passing true as the third argument to addEventListener.
+
+============================================================================================================================
 
 
 Generator functions allow us to pause and resume function execution using the yield keyword.
@@ -554,19 +618,148 @@ Promise chaining helps handle multiple asynchronous operations in a sequential a
 
 =============================================================================================================================
 
+Promise.all:
+Will wait for all of the promises to resolve or any one of the promise 
+reject.
+
+Promise.allSettled:
+Will wait for all the promises to settle (either fulfilled or rejected).
+
+
+Promise.any:
+Will return if any one of the promise fulfills or rejects when all the 
+promises are rejected.
+
+Promise.race:
+Will return as soon as when any one of the promise is settled
+
+=============================================================================================================================
+
+
 Memory Leak
 
 A memory leak in React happens when a component keeps references to resources like timers, event listeners, API calls,
 or closures even after the component is unmounted, preventing garbage collection and causing unnecessary memory usage.
 
 
+========================================
+
+for(var i=1;i<=5;i++){ setTimeout(()=>{ console.log(i) },i*1000) } 
+i want to print 1,2,3,4,5
+
+The issue is because you are using var. var is function-scoped, so all callbacks share the same i. 
+By the time setTimeout runs, the loop has finished and i is 6.
+
+easy fix
+for (var i = 1; i <= 5; i++) {
+  setTimeout((i) => console.log(i), i * 1000, i);
+}
+
+Yes. This works because setTimeout can pass extra arguments to the callback.
+
+------------------------------------------------------------------------------------------------
+
+const user = {
+  name: "Logesh",
+
+  regular() {
+    console.log(this.name);
+  },
+
+  arrow: () => {
+    console.log(this.name);
+  }
+};
+
+user.arrow()
+
+---------------------------------------------------------------------------------------------------
+garbage collection 
+
+JavaScript automatically manages memory using garbage collection. The engine identifies objects 
+that are no longer reachable from active references and removes them from memory. In Node.js, V8 mainly 
+uses generational garbage collection, so short-lived objects are collected frequently and long-lived objects 
+are handled differently
+
+
+---------------------------------------------------------------------------------------------------
+
+I use centralized error-handling middleware instead of putting duplicate error responses in every controller. 
+Controllers pass errors using next(error), and the final middleware logs the error and sends a 
+consistent response to the client.
+
+----------------------------------------------------------------------------------------------------
+
 =============================================================================================================================
 Interface and Type 
 
-Both interface and type are used to define the structure of data in TypeScript. The main difference is that interfaces 
-are primarily used for object structures and support extension and declaration merging, while types are more flexible 
-and can represent primitives, unions, tuples, and complex types.
+In TypeScript, both interface and type are used to define the structure of data and provide type safety.
+
+I generally use interface for objects such as API responses, user details, or component props. 
+
+I use type when I need something more flexible, like union types, intersection types, or defining a specific set of allowed values
 
 
 =============================================================================================================================
+Generics
 
+Generics in TypeScript allow us to write reusable functions, components, and types that work with different data types 
+while maintaining type safety.
+
+For example, instead of writing separate functions for numbers and strings, I can create one generic function that 
+accepts different types and returns the same type.
+
+In React projects, I can use generics for reusable API response handlers.
+
+
+========================================================================================
+Union (|)
+
+Union type means a variable can accept more than one specified data type. We use the pipe symbol | to define it.
+
+For example, in our application, a contract ID might come from an API as either a number or a string. Instead of using any, 
+I can use a union type
+
+=======================================================================================
+Intersection (&)
+Intersection type combines multiple types into one. It means the final object must contain all the properties defined in both types.
+
+For example, if I have User and Employee interfaces, I can combine them to create an EmployeeDetails type.
+
+
+=========================================================================================
+unknown vs any in TypeScript
+
+1. any – No type checking
+
+When we use any, TypeScript allows us to perform any operation without checking the type.
+
+2. unknown – Type checking required
+
+unknown can also store any value, but before performing an operation, we must check its type.
+
+=================================================================================================
+
+Partial, Pick, and Omit
+
+These are TypeScript utility types used to create new types from existing interfaces
+example:
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+1. Partial – Makes all properties optional
+Useful when implementing update APIs where the user can update only a few fields.
+Here, all properties become optional
+
+2. Pick – Select specific properties
+Useful when we need only selected fields from an existing interface.
+
+3. Omit – Exclude specific properties
+Useful when we don't want to expose sensitive fields, such as passwords, in a response type.
+
+
+======================================================================================================================
