@@ -1,0 +1,73 @@
+=============================================================================================================================
+Interface and Type 
+
+In TypeScript, both interface and type are used to define the structure of data and provide type safety.
+
+I generally use interface for objects such as API responses, user details, or component props. 
+
+I use type when I need something more flexible, like union types, intersection types, or defining a specific set of allowed values
+
+
+=============================================================================================================================
+Generics
+
+Generics in TypeScript allow us to write reusable functions, components, and types that work with different data types 
+while maintaining type safety.
+
+For example, instead of writing separate functions for numbers and strings, I can create one generic function that 
+accepts different types and returns the same type.
+
+In React projects, I can use generics for reusable API response handlers.
+
+
+========================================================================================
+Union (|)
+
+Union type means a variable can accept more than one specified data type. We use the pipe symbol | to define it.
+
+For example, in our application, a contract ID might come from an API as either a number or a string. Instead of using any, 
+I can use a union type
+
+=======================================================================================
+Intersection (&)
+Intersection type combines multiple types into one. It means the final object must contain all the properties defined in both types.
+
+For example, if I have User and Employee interfaces, I can combine them to create an EmployeeDetails type.
+
+
+=========================================================================================
+unknown vs any in TypeScript
+
+1. any – No type checking
+
+When we use any, TypeScript allows us to perform any operation without checking the type.
+
+2. unknown – Type checking required
+
+unknown can also store any value, but before performing an operation, we must check its type.
+
+=================================================================================================
+
+Partial, Pick, and Omit
+
+These are TypeScript utility types used to create new types from existing interfaces
+example:
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+1. Partial – Makes all properties optional
+Useful when implementing update APIs where the user can update only a few fields.
+Here, all properties become optional
+
+2. Pick – Select specific properties
+Useful when we need only selected fields from an existing interface.
+
+3. Omit – Exclude specific properties
+Useful when we don't want to expose sensitive fields, such as passwords, in a response type.
+
+
+======================================================================================================================
