@@ -36,6 +36,12 @@ Semantic tags describe the meaning of content clearly.
 | Access with # | Access with . |
 
 
+5.Web accessibility
+
+Web accessibility means making applications usable for everyone, including people with disabilities. In React, I follow semantic HTML,
+provide alt text for images, ensure keyboard navigation, use proper labels for form fields, and add ARIA attributes wherever necessary.
+
+
 
 -------------------------------------------------------------------------------
 
@@ -80,7 +86,13 @@ z-index controls stacking order of positioned elements.
 
 Higher z-index appears on top.
 
+5.CSS specificity
 
+CSS specificity determines which CSS rule gets applied when multiple selectors target the same element. 
+The priority is generally inline styles, IDs, classes, and then element selectors. For example, if an element has both a class and an ID selector,
+the ID selector wins because it has higher specificity. If specificity is equal, the rule declared later usually takes precedence.
+
+Inline → ID → Class → Element
 
 
   dns
