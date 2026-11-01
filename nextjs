@@ -1,0 +1,81 @@
+1.Next js
+
+
+React is a JavaScript library for building user interfaces. Next.js is a React-based framework used to build web applications.
+It provides additional features like file-based routing, server-side rendering, static site generation, 
+API routes, and SEO support.
+
+
+-------------------------------------------------------------------------
+2.Feature of Nextjs
+
+FIlebased routing
+SSR
+static site generation
+image optimization
+SEO
+API/route handler
+
+---------------------------------------------------------------------------
+3.Filebased routing
+
+In nextjs, routes are created based on the folder/file structure
+
+app/
+------> pages.js
+----->about --> pages.js
+----->product ---> page.js
+
+------------------------------------------------------------------------------
+
+4.App router
+
+app router is the modern routing system in nextjs based on the app directory 
+
+
+--------------------------------------------------------------------------------
+getServerSideProps vs getStaticProps?
+
+getServerSideProps fetches data on the server for every request, whereas getStaticProps fetches data during the build 
+to generate static pages. I use getServerSideProps when data must be fresh for each request and getStaticProps when the 
+content can be generated ahead of time
+
+
+--------------------------------------------------------------------------------
+How does Next.js improve SEO and performance
+
+Next.js supports server rendering and static generation, which can deliver meaningful HTML to search engines. 
+For performance, I use next/image, code splitting, lazy loading, appropriate caching, and optimized data fetching. 
+I also configure page titles and meta descriptions.
+
+
+
+--------------------------------------------------------------------------------
+
+Next.js routes are created based on the folder/file structure.
+In the Pages Router, pages/about.js creates the /about route, and 
+pages/products/[id].js creates a dynamic route such as /products/10. I can access the dynamic ID using 
+useRouter or through the server-side data-fetching context.
+
+--------------------------------------------------------------------------------
+
+
+1. LCP — Largest Contentful Paint
+Meaning: How quickly the largest visible content element loads.
+
+2. INP — Interaction to Next Paint
+Meaning: How quickly the page responds visually after a user interacts with it.
+
+3. CLS — Cumulative Layout Shift
+Meaning: How much unexpected movement occurs in the page layout while it loads.
+
+----------------------------------------------------------------------------------
+
+The Pages Router and App Router are both routing systems in Next.js. 
+The Pages Router uses the pages directory where files automatically become routes and supports data-fetching methods 
+like getServerSideProps and getStaticProps. 
+The App Router uses the app directory and introduces Server Components, nested layouts, and built-in loading and error UI conventions.
+Since my project used the Pages Router, I'm more familiar with that approach, but I understand the key concepts of the App Router.
+
+
+------------------------------------------------------------------------------------
