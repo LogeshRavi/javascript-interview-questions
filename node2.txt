@@ -1,11 +1,12 @@
 1.Difference between cluster and worker threads
 
+
 In Node.js, Cluster and Worker Threads are both used to utilize multi-core CPUs, but they solve different problems.
 
 Cluster creates multiple Node.js processes, each with its own event loop and memory.
 It is mainly used to scale HTTP servers and handle more concurrent requests by distributing traffic across CPU cores.
 
-Worker Threads run inside the same process but on different threads.
+Worker Threads run inside the same  process but on different threads.
 They share memory and are used for CPU-intensive tasks like data processing, encryption, or image manipulation.
 
 In short, Cluster is for scaling requests, and Worker Threads are for heavy computation without blocking the event loop.
@@ -124,7 +125,6 @@ Load balancer is used to distribute incoming requests across multiple servers.
 Instead of sending all traffic to one server, requests are balanced between multiple instances.
 
 This helps improve:
-
 Performance
 Scalability
 Fault tolerance
@@ -315,7 +315,13 @@ Finally, I would optimize the bottleneck, deploy the fix, and monitor to ensure 
 
 
 -----------------------------------------------------------------------------------------------------------------------------
-22.
+22.SQL vs mongoDb
+
+I choose SQL when the application has structured and relational data where relationships, transactions, and strong consistency 
+are important. For example, in an appointment booking system, users, doctors, appointments, and payments have clear relationships, 
+so I would prefer PostgreSQL or MySQL.
+So, my choice depends on the data structure, relationships, transaction requirements, scalability, and query patterns, 
+rather than simply choosing one database over the other.
 
 
 
@@ -334,7 +340,6 @@ that allows real-time, bidirectional communication.
 Microservices architecture divides application into smaller independent services.
 
 Advantages:
-
 Independent deployment
 Better scalability
 Easier maintenance
@@ -381,8 +386,18 @@ Configure CORS according to the domains that actually need access to your API.
 
 
 -----------------------------------------------------------------------------------------------------------------------------
-26.
+26.How handle db error in nodejs If db not return any response
 
+If the database doesn't respond, I would handle it using a connection timeout and query timeout rather than allowing 
+the request to wait indefinitely.
+
+I would catch the database error in the service or repository layer and pass it to centralized error-handling middleware. 
+I would also configure connection pooling and monitor database health.
+
+For temporary failures, I can use limited retries with exponential backoff, but I wouldn't retry every error because 
+it can increase database load.
+
+Finally, I would return an appropriate 503 Service Unavailable response to the client and log the failure for monitoring.
 
 
 
@@ -395,7 +410,10 @@ For example, if users are commonly searched by email or user ID, I would create 
 I would also use pagination and select only the required columns instead of using SELECT *.  
 I would check the query execution plan using EXPLAIN to make sure the index is actually being used. 
 For very large datasets and complex searches, I could also consider caching with Redis or a search engine like Elasticsearch.
-
+ 
+ 
+ 
+ 
 
 -----------------------------------------------------------------------------------------------------------------------------
 28.ORM 
@@ -428,7 +446,8 @@ validation, logging, and rate limiting.
 Then the request goes to the controller, which handles the HTTP request and response. The controller calls the service layer, 
 where I keep the actual business logic.
 The service layer communicates with the repository/data-access layer, which handles database operations with SQL or MongoDB.
-I also keep common functionality like error handling, authentication, configuration, and logging in separate modules. For external services or background processing, I use APIs, Redis, or message queues depending on the requirement.
+I also keep common functionality like error handling, authentication, configuration, and logging in separate modules. 
+For external services or background processing, I use APIs, Redis, or message queues depending on the requirement.
 This separation gives us loose coupling, easier testing, maintainability, and scalability.
  
 
@@ -469,3 +488,82 @@ I also cover positive cases, negative cases, and edge cases.
 
 -----------------------------------------------------------------------------------------------------------------------------
 
+
+33.Zero-Downtime Deployment
+
+I would use a rolling deployment or blue-green deployment so that the existing application continues serving traffic while 
+the new version is deployed.
+For example, with multiple Node.js instances behind a load balancer, I would deploy the new version to one or more instances, 
+run health checks, and then gradually shift traffic to the new version.
+Once the new version is stable, I would remove the old instances. If there is an issue, I can quickly route traffic 
+back to the previous version.
+I would also make sure database migrations are backward compatible, so old and new application versions can 
+work during the deployment.
+
+---------------------------------------------------------------------------------------------------
+34.Partitioning and sharding 
+
+Both sharding and partitioning help us manage large amounts of data, but the main difference is where the data is stored.
+
+Partitioning means splitting a large table into smaller parts within the same database system, usually to improve query 
+performance and manageability.
+
+Sharding means splitting data across multiple database servers. We use it when one database server is no 
+longer sufficient for the data volume or traffic.
+
+
+---------------------------------------------------------------------------------------------------
+35.Agile methodology
+
+We follow Agile methodology, mainly Scrum, to deliver features in an iterative and incremental way.
+Our sprint cycle is usually 2 weeks, where we start with sprint planning and break down tasks into user stories using Jira.
+
+We have daily standups to track progress and blockers, followed by development and code reviews.
+At the end of the sprint, we do a demo to showcase completed features and a retrospective to identify improvements.
+
+This process helps us adapt to changing requirements quickly and ensures continuous delivery of value.
+
+---------------------------------------------------------------------------------------------------------
+
+AWS Lambda is a serverless compute service that allows us to run code without managing servers. 
+We deploy our function, and AWS automatically handles the infrastructure, scaling, and execution.
+Lambda can be triggered by services such as API Gateway, S3, SQS, EventBridge, or DynamoDB Streams. 
+We are charged based on the compute time and requests rather than maintaining an always-running server.
+
+In my project, I used AWS Lambda for image thumbnail generation. When a user uploads or updates an image in an S3 bucket, 
+the S3 event triggers a Lambda function.
+The Lambda function receives the S3 object information, downloads or reads the image, resizes it to the required thumbnail 
+dimensions using an image-processing library such as Sharp, and then uploads the generated thumbnail back to S3.
+This approach is asynchronous and serverless, so I didn't need to keep a Node.js server running just for image processing.
+It also scales automatically when multiple images are uploaded.
+
+
+
+---------------------------------------------------------------------------------------------------
+
+Suppose two users try to purchase the last available product simultaneously. I won't simply fetch the stock and 
+then update it, because both requests might read the same stock value.
+
+Instead, I use an atomic database update with a condition like stock > 0 and decrement the stock in the same operation. 
+I combine that with a database transaction so stock deduction and order creation happen together. This prevents overselling, 
+even when multiple Node.js instances are running.
+ 
+ ---------------------------------------------------------------------------------------------------------
+ secure authentication tokens
+ 
+I prefer storing tokens in HttpOnly, Secure, SameSite cookies instead of localStorage to reduce the risk of token theft through XSS.
+I use short-lived access tokens to minimize the impact if a token is compromised.
+I use refresh token rotation to generate a new refresh token when the old one is used.
+On the backend, I verify the JWT signature, expiration, issuer, and audience using middleware.
+I use HTTPS to protect tokens during transmission.
+I never expose JWT secrets or private keys in frontend code.
+I implement logout by invalidating the refresh token on the server.
+
+
+----------------------------------------------------------------------------------------------------------
+
+When the access token expires, the backend returns 401 Unauthorized. In React, I handle this using an Axios response 
+interceptor. The interceptor calls the refresh-token API, where the backend validates the refresh token stored in an HttpOnly 
+cookie and generates a new access token. Then I update the token in memory and retry the original failed API request. 
+If the refresh token is expired or invalid, I clear the authentication state and redirect the user to login. 
+I also handle concurrent 401 responses using a shared refresh promise to avoid multiple refresh calls.
