@@ -1,0 +1,126 @@
+Self intro
+
+Hi, I'm Logesh. I have 5 years of experience as a Full Stack Developer, mostly worked with React.js and Node.js.
+
+Most recently, I worked at Brillio for the Verizon client on a real estate application. 
+
+On the frontend, I developed user interfaces using React.js and TypeScript, integrated APIs, implemented validations, and 
+focused on providing a good user experience.
+
+On the backend, I developed and maintained RESTful APIs using Node.js and Express. My responsibilities included designing 
+API endpoints, implementing business logic, handling request validation and error handling, working with databases and queries, 
+and integrating different services. I also focused on API performance, security, and writing reusable middleware wherever required. 
+
+Apart from development, I also supported the QA team during testing and helped troubleshoot and resolve 
+production issues.
+
+Throughout my career, I’ve enjoyed working across both frontend and backend development, building scalable applications, 
+and solving performance-related challenges.
+
+My recent project has now been completed, and I have been released from the project. 
+So, I’m currently looking for my next opportunity where I can work on larger-scale products, take more ownership, 
+and continue growing as a senior engineer.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Most recent project, I am worked on a project called FUZE for Verizon.
+
+FUZE is a real estate and geographic dashboard application used to manage telecom tower locations, lease information, rent details, 
+and operational status across different regions from a single platform.
+
+In this project, I work as a Full Stack Developer using React.js, Node.js, TypeScript, Oracle Database, and Leaflet.js.
+On the frontend, I develop dashboards and map based screens where users can view tower Information, lease details, 
+rent information, and tower status.
+
+
+On the backend, I develop REST APIs, work on authentication and role-based access, and optimize APIs for better performance.
+
+One of my key responsibilities is developing new features, integrating APIs and supporting QA testing, and 
+resolving production issues.
+
+One major challenge we faced was loading a large number of tower locations on the map, which caused performance issues. 
+To solve this, we implemented lazy loading, API optimization, and map marker clustering, which significantly 
+improved application performance.
+
+Overall, the application helps business teams monitor telecom infrastructure efficiently and 
+reduces manual effort by providing all information in a single dashboard.
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+ 
+How do you handle your day-to-day work?
+
+I usually start my day by reviewing my assigned tasks and checking if there are any high-priority issues or production 
+incidents that need immediate attention.
+
+Then I attend the daily stand-up meeting and share my progress, planned work, and any blockers.
+
+Based on the sprint priorities, I focus on my development tasks, such as implementing new features, API integration, 
+code reviews, or bug fixes.
+
+Throughout the day, I collaborate with product owners, QA engineers, and backend developers whenever clarification or 
+support is needed.
+
+If any production issues arise, I prioritize them based on business impact and work with the team to resolve them quickly.
+
+Before ending the day, I update the status of my tasks, review pending work, and plan the next day's activities.
+
+This helps me stay organized and ensures that important tasks are completed on time.
+
+------------------------------------------------------------------------------------------------------------------
+What will you do if there is a production issue but you are unable to reproduce it in lower environments
+
+If I am unable to reproduce the issue in a lower environment, I would first focus on collecting as much information 
+as possible from production.
+
+I would start by checking application logs, API logs, error messages, user details, request payloads, and any monitoring tools 
+available.
+
+Next, I would compare the production environment with lower environments to identify differences in configuration, data, 
+user roles, permissions, feature flags, or third-party integrations.
+
+Since many production issues are data-specific, I would try to identify whether the issue is affecting only certain users, 
+roles, or specific business scenarios
+
+
+
+If needed, I would work with the support team or affected users to gather exact steps, screenshots, and request details.
+
+Based on the findings, I would create a similar test scenario in a lower environment or use production-like test data to reproduce the issue.
+
+If the issue is critical and the root cause is still unclear, I would collaborate with backend, DevOps, and other teams to 
+analyze logs and narrow down the problem while keeping stakeholders informed about progress.
+
+My goal would be to minimize user impact while systematically identifying the root cause.
+
+===============================================================================================================
+
+
+
+One challenging technical issue I faced was after a production deployment when some users were unable to log in to our application.
+
+Since our project was supporting US users, deployments usually happened during their nighttime. 
+We needed to resolve the issue before users started accessing the application the next morning.
+
+First, I joined the incident bridge call with the team to understand the impact and identify which users were affected. 
+I checked the application logs, API responses, and recent deployment changes.
+
+During the investigation, we identified an issue related to role-based authorization. 
+The backend was returning user role and access information that did not match the frontend's authorization validation, 
+which prevented certain users from logging in successfully.
+
+I coordinated with the backend team to identify the root cause and reproduced the issue using different user roles 
+in a lower environment. After identifying the required changes, we tested the fix and validated the login flow for different roles.
+
+Once the fix was verified, we deployed the hotfix and monitored the application to ensure users could log in successfully.
+
+We resolved the issue before the next business day. Afterward, we added additional test cases for different user roles 
+and improved validation to prevent similar issues in future deployments.
+
+This experience taught me the importance of systematic debugging, cross-team collaboration, and having proper regression 
+testing for critical functionality such as authentication.
+
+
+----------------------------------------------------------------------------------------------------------------------
