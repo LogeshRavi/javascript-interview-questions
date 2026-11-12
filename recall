@@ -1,0 +1,199 @@
+1. Self intro
+
+Hi, I'm Logesh. I have 5 years of experience as a Full Stack Developer, mostly worked with React.js and Node.js.
+
+Most recently, I worked at Brillio for the Verizon client on a real estate application. 
+
+On the frontend, I developed user interfaces using React.js and TypeScript, integrated APIs, implemented validations, and 
+focused on providing a good user experience.
+
+On the backend, I developed and maintained RESTful APIs using Node.js and Express. My responsibilities included designing 
+API endpoints, implementing business logic, handling request validation and error handling, working with databases and queries, 
+and integrating different services. I also focused on API performance, security, and writing reusable middleware wherever required. 
+
+Apart from development, I also supported the QA team during testing and helped troubleshoot and resolve 
+production issues.
+
+Throughout my career, I’ve enjoyed working across both frontend and backend development, building scalable applications, 
+and solving performance-related challenges.
+
+My recent project has now been completed, and I have been released from the project. 
+So, I’m currently looking for my next opportunity where I can work on larger-scale products, take more ownership, 
+and continue growing as a senior engineer.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+2. About ur recent project
+
+Most recent project, I am worked on a project called FUZE for Verizon.
+
+FUZE is a real estate and geographic dashboard application used to manage telecom tower locations, lease information, rent details, 
+and operational status across different regions from a single platform.
+
+In this project, I work as a Full Stack Developer using React.js, Node.js, TypeScript, Oracle Database, and Leaflet.js.
+On the frontend, I develop dashboards and map based screens where users can view tower Information, lease details, 
+rent information, and tower status.
+
+
+On the backend, I develop REST APIs, work on authentication and role-based access, and optimize APIs for better performance.
+
+One of my key responsibilities is developing new features, integrating APIs and supporting QA testing, and 
+resolving production issues.
+
+One major challenge we faced was loading a large number of tower locations on the map, which caused performance issues. 
+To solve this, we implemented lazy loading, API optimization, and map marker clustering, which significantly 
+improved application performance.
+
+Overall, the application helps business teams monitor telecom infrastructure efficiently and 
+reduces manual effort by providing all information in a single dashboard.
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+3. How do you fix prod issue
+
+
+One challenging technical issue I faced was after a production deployment when some users were unable to log in to our application.
+
+Since our project was supporting US users, deployments usually happened during their nighttime. 
+We needed to resolve the issue before users started accessing the application the next morning.
+
+First, I joined the incident bridge call with the team to understand the impact and identify which users were affected. 
+I checked the application logs, API responses, and recent deployment changes.
+
+During the investigation, we identified an issue related to role-based authorization. 
+The backend was returning user role and access information that did not match the frontend's authorization validation, 
+which prevented certain users from logging in successfully.
+
+I coordinated with the backend team to identify the root cause and reproduced the issue using different user roles 
+in a lower environment. After identifying the required changes, we tested the fix and validated the login flow for different roles.
+
+Once the fix was verified, we deployed the hotfix and monitored the application to ensure users could log in successfully.
+
+We resolved the issue before the next business day. Afterward, we added additional test cases for different user roles 
+and improved validation to prevent similar issues in future deployments.
+
+This experience taught me the importance of systematic debugging, cross-team collaboration, and having proper regression 
+testing for critical functionality such as authentication.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+4. My React app suddenly became slow after adding a new feature — how do I find and fix the issue?
+
+
+First, I won't directly start optimizing randomly.
+I'll first identify where the performance issue is happening whether it's due to unnecessary re-renders, 
+heavy API calls, large DOM rendering, memory leaks, or expensive calculations.
+
+Step 1: Reproduce the Issue 
+Step 2: Use React DevTools Profiler --> "I use React DevTools Profiler to identify unnecessary re-renders
+Step 3: Fix Unnecessary Re-renders  --> using useMemo and useCallback hooks
+Step 4: Optimize Component Rendering  --> React.memo
+Step 5: Optimize Large Lists --> I use virtualization. Because rendering 5000 DOM elements freezes UI.
+Step 6: API Optimization --> Debounce search API, Pagination, Caching, Parallel API calls, Avoid duplicate API calls
+Step 7: Bundle Size Analysis --> I use webpack bundle analyzer and Code splitting, Lazy loading
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+How do to secure API 
+1. Authentication
+Use secure authentication mechanisms such as JWT or session-based authentication to verify the user's identity.
+🔹 2. Authorization
+Authentication tells us who the user is. Authorization determines what the user is allowed to do.
+For example, a normal user shouldn't be able to access admin-only APIs.
+🔹 3. Input Validation
+Never trust data coming from the client.
+Validate request body, query parameters, and URL parameters before processing them.
+🔹 4. Password Security
+Never store plain-text passwords in DB.
+Use strong password hashing algorithms such as bcrypt or Argon2.
+🔹 5. API Rate Limiting
+Limit how frequently a client can call your APIs.
+This helps protect login, OTP, search, and other sensitive endpoints from excessive requests.
+🔹 6. Protect Sensitive Data
+Never expose:
+• Passwords
+• JWT secrets
+• Database credentials
+• API keys
+• Private configuration
+Use environment variables and proper secret management.
+🔹 7. HTTP Security Headers
+Use security headers to reduce common browser-based attacks.
+For Express applications, middleware such as Helmet can help configure several security-related headers.
+🔹 8. CORS Configuration
+Don't blindly allow requests from every origin.
+Configure CORS according to the domains that actually need access to your API.
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+5. How handle db error in nodejs If db not return any response
+
+If the database doesn't respond, I would handle it using a connection timeout and query timeout rather than allowing 
+the request to wait indefinitely.
+
+I would catch the database error in the service or repository layer and pass it to centralized error-handling middleware. 
+I would also configure connection pooling and monitor database health.
+
+For temporary failures, I can use limited retries with exponential backoff, but I wouldn't retry every error because 
+it can increase database load.
+
+Finally, I would return an appropriate 503 Service Unavailable response to the client and log the failure for monitoring.
+-----------------------------------------------------------------------------------------------------------------------------
+Slow API debugging
+
+If an API is slow in production, first I would try to identify where the latency is coming from.
+I would start by checking logs and monitoring tools to see response time patterns.
+
+Then I would break down the API flow — whether the delay is in database queries, external API calls, or application logic.
+
+I would use tools like APM (New Relic, Datadog) or add timing logs to measure each step.
+
+If the issue is in the database, I would check query performance and indexing.
+If it’s external APIs, I would add timeouts or caching.
+
+Finally, I would optimize the bottleneck, deploy the fix, and monitor to ensure stability.
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+6. SQL vs mongoDb
+
+I choose SQL when the application has structured and relational data where relationships, transactions, and strong consistency 
+are important. 
+
+For example, in an appointment booking system, users, doctors, appointments, and payments have clear relationships, 
+so I would prefer PostgreSQL or MySQL.
+
+On the other hand, I choose NoSQL when the data structure is flexible, frequently changing, or doesn't require 
+complex relationships.
+
+For example, in an e-commerce application, product details may vary across categories. A mobile phone has RAM and storage, 
+whereas a shirt has size and color. I would prefer MongoDB because it supports flexible document structures.
+
+So, my choice depends on the data structure, relationships, transaction requirements, scalability, and query patterns, 
+rather than simply choosing one database over the other.
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+7.Nodejs architecture
+
+In my Node.js backend, I follow a layered architecture to keep the application maintainable and scalable.
+The request first comes through the API/router layer, where I handle routing and middleware such as authentication, 
+validation, logging, and rate limiting.
+Then the request goes to the controller, which handles the HTTP request and response. The controller calls the service layer, 
+where I keep the actual business logic.
+The service layer communicates with the repository/data-access layer, which handles database operations with SQL or MongoDB.
+I also keep common functionality like error handling, authentication, configuration, and logging in separate modules. 
+For external services or background processing, I use APIs, Redis, or message queues depending on the requirement.
+This separation gives us loose coupling, easier testing, maintainability, and scalability.
+ 
+ 
+ -----------------------------------------------------------------------------------------------------------------------
